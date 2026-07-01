@@ -74,7 +74,7 @@ function DrawMap()
         for(let x=0; x<MapData.width; x++)
         {
             let Tile = Layer[y * MapData.width + x] - 1;
-console.log(x, y, Tile);
+//console.log(x, y, Tile);
             if(Tile < 0)
                 continue;
 
