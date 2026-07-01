@@ -38,7 +38,7 @@ async function LoadMap()
     // TMJ laden
     //-------------------------------------------------
 
-    const Response = await fetch("Maps/USAcity.tsj");
+    const Response = await fetch("Maps/USAcity.tmj");
 
     MapData = await Response.json();
 

@@ -1,0 +1,24 @@
+{ "columns":4,
+ "image":"..\/Art\/USA_Roads.png",
+ "imageheight":200,
+ "imagewidth":200,
+ "margin":0,
+ "name":"USA_Roads",
+ "spacing":0,
+ "tilecount":16,
+ "tiledversion":"1.12.2",
+ "tileheight":50,
+ "tiles":[
+        {
+         "id":0,
+         "properties":[
+                {
+                 "name":"Exit",
+                 "type":"string",
+                 "value":"S,W"
+                }]
+        }],
+ "tilewidth":50,
+ "type":"tileset",
+ "version":"1.10"
+}
