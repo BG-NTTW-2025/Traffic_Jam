@@ -55,7 +55,7 @@ async function LoadMap()
 
     TileImage = new Image();
 
-    TileImage.src = "Maps/USA_Roads.png";
+    TileImage.src = "Art/USA_Roads.png";
 
     TileImage.onload = DrawMap;
 }
