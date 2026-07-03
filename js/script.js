@@ -26,6 +26,8 @@ async function Init()
     Ctx = Canvas.getContext("2d");
 
     await LoadMap();
+
+    requestAnimationFrame(GameLoop);
 }
 
 
@@ -102,4 +104,33 @@ function DrawMap()
             );
         }
     }
+function GetTileNumber(TileX, TileY)
+{
+    let Layer = MapData.layers[0].data;
+
+    return Layer[TileY * MapData.width + TileX] - 1;
+}	
+
+/*************************************************/
+/* SECTION 5 - GAME LOOP                         */
+/*************************************************/
+
+function Update()
+{
+    // Nog leeg.
+}
+
+function Draw()
+{
+    DrawMap();
+}
+
+function GameLoop()
+{
+    Update();
+
+    Draw();
+
+    requestAnimationFrame(GameLoop);
+}
 }
