@@ -27,7 +27,9 @@ async function Init()
 
     await LoadMap();
 
-    requestAnimationFrame(GameLoop);
+InitVehicles();
+
+requestAnimationFrame(GameLoop);
 }
 
 
@@ -112,17 +114,80 @@ function GetTileNumber(TileX, TileY)
 }	
 
 /*************************************************/
-/* SECTION 5 - GAME LOOP                         */
+/* SECTION 5 - VEHICLES                          */
+/*************************************************/
+
+const NORTH = 0;
+const EAST  = 1;
+const SOUTH = 2;
+const WEST  = 3;
+
+let CarImage = new Image();
+
+let Car01 =
+{
+    TileX : 1,
+    TileY : 1,
+
+    PixelX : 0,
+    PixelY : 0,
+
+    Direction : NORTH
+};
+
+function InitVehicles()
+{
+    CarImage.src = "Images/Car01.png";
+
+    Car01.PixelX = Car01.TileX * TILE_WIDTH;
+    Car01.PixelY = Car01.TileY * TILE_HEIGHT;
+}
+
+function UpdateVehicles()
+{
+    // Nog leeg.
+}
+
+function DrawVehicles()
+{
+    if(!CarImage.complete)
+        return;
+
+    Ctx.save();
+
+    Ctx.translate(
+        Car01.PixelX + TILE_WIDTH / 2,
+        Car01.PixelY + TILE_HEIGHT / 2
+    );
+
+    Ctx.rotate(0);
+
+    Ctx.drawImage(
+        CarImage,
+        -20,
+        -20,
+        40,
+        40
+    );
+
+    Ctx.restore();
+}
+
+
+/*************************************************/
+/* SECTION 6 - GAME LOOP                         */
 /*************************************************/
 
 function Update()
 {
-    // Nog leeg.
+    UpdateVehicles();
 }
 
 function Draw()
 {
     DrawMap();
+
+    DrawVehicles();
 }
 
 function GameLoop()
