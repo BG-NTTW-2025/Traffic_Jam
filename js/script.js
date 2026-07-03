@@ -64,7 +64,7 @@ async function LoadMap()
 
     TileImage.src = "Art/USA_Roads.png";
 
-    TileImage.onload = DrawMap;
+    // TileImage.onload = DrawMap;
 }
 
 
@@ -106,6 +106,7 @@ function DrawMap()
             );
         }
     }
+}	
 
 /*************************************************/
 /* SECTION 5 - VEHICLES                          */
@@ -190,5 +191,4 @@ function GameLoop()
     Draw();
 
     requestAnimationFrame(GameLoop);
-}
 }
