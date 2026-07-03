@@ -156,7 +156,7 @@ function DrawVehicles()
         Car01.PixelY + TILE_HEIGHT / 2
     );
 
-    Ctx.rotate(0);
+    Ctx.rotate(Math.PI);
 
     Ctx.drawImage(
         CarImage,
