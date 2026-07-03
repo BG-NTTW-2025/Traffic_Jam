@@ -132,7 +132,7 @@ let Car01 =
 
 function InitVehicles()
 {
-	alert("InitVehicles gevonden");
+	alert("Versie 1:49");
     CarImage.src = "Images/Car01.png";
 
     Car01.PixelX = Car01.TileX * TILE_WIDTH;
