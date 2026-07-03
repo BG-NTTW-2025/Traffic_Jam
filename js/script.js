@@ -143,9 +143,9 @@ function InitVehicles()
     Car01.PixelY = Car01.TileY * TILE_HEIGHT;
 }
 
-function UpdateVehicles()
+function Update()
 {
-    // Nog leeg.
+    UpdateVehicles();
 }
 
 function DrawVehicles()
