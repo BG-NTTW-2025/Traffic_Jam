@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.21";
+const VERSION = "v0.1.22";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -240,7 +240,7 @@ if(Car01.Distance >= TILE_WIDTH)
             ChooseDirectionFromExit(Exit);
     }
 }
-
+}
 
 function DrawVehicles()
 {
