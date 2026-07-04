@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.22";
+const VERSION = "v0.1.23";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -232,13 +232,12 @@ if(Car01.Distance >= TILE_WIDTH)
         Car01.TileY
     );
 
-    let Exit = GetExit(TileNumber);
+let Exit = GetExit(TileNumber);
 
-    if(Exit != "")
-    {
-        Car01.Direction =
-            ChooseDirectionFromExit(Exit);
-    }
+Car01.Direction =
+    ChooseDirectionFromExit(Exit);
+
+
 }
 }
 
@@ -280,9 +279,6 @@ function GetExit(TileNumber)
 
 function ChooseDirectionFromExit(Exit)
 {
-    if(!Exit || Exit.length == 0)
-        return;
-
     let Choice;
 
     if(Exit.length == 1)
@@ -301,18 +297,14 @@ function ChooseDirectionFromExit(Exit)
 
     switch(Choice)
     {
-        case "N":
-            return NORTH;
-
-        case "E":
-            return EAST;
-
-        case "S":
-            return SOUTH;
-
-        case "W":
-            return WEST;
+        case "N": return NORTH;
+        case "E": return EAST;
+        case "S": return SOUTH;
+        case "W": return WEST;
     }
+
+    console.error("Ongeldige Exit:", Exit);
+    return SOUTH;
 }
 
 function GetCarRotation()
