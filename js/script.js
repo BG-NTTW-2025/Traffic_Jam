@@ -3,7 +3,7 @@
 /*************************************************/
 /* SECTION 1 - GLOBALS                           */
 /*************************************************/
-const VERSION = "v0.1.5";
+const VERSION = "v0.1.6";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -127,7 +127,10 @@ let Car01 =
     PixelX : 0,
     PixelY : 0,
 
-    Direction : NORTH
+    Direction : SOUTH,
+
+    Speed : 1,
+    Moving : true
 };
 
 function InitVehicles()
@@ -138,6 +141,31 @@ function InitVehicles()
 
     Car01.PixelX = Car01.TileX * TILE_WIDTH;
     Car01.PixelY = Car01.TileY * TILE_HEIGHT;
+}
+
+function UpdateVehicles()
+{
+    if(!Car01.Moving)
+        return;
+
+    switch(Car01.Direction)
+    {
+        case NORTH:
+            Car01.PixelY -= Car01.Speed;
+            break;
+
+        case EAST:
+            Car01.PixelX += Car01.Speed;
+            break;
+
+        case SOUTH:
+            Car01.PixelY += Car01.Speed;
+            break;
+
+        case WEST:
+            Car01.PixelX -= Car01.Speed;
+            break;
+    }
 }
 
 function UpdateVehicles()
