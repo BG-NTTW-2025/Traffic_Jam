@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.16";
+const VERSION = "v0.1.17";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -232,14 +232,13 @@ function UpdateVehicles()
           Car01.TileY
         );
 
-let Exit = TileInfo[TileNumber].Exit;
+let Exit = GetExit(TileNumber);
 
-console.log(
-    "Tile:",
-    TileNumber,
-    "Exit:",
-    Exit
-);
+if(Exit)
+{
+    Car.Direction =
+        ChooseDirectionFromExit(Exit);
+}
     }
 }
 
