@@ -3,7 +3,11 @@
 /*************************************************/
 /* SECTION 1 - GLOBALS                           */
 /*************************************************/
-const VERSION = "v0.1.11";
+
+let TilesetData;
+
+let TileInfo = [];
+const VERSION = "v0.1.12";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -26,6 +30,8 @@ async function Init()
     Ctx = Canvas.getContext("2d");
 
 await LoadMap();
+
+await LoadTileset();
 
 InitVehicles();
 
@@ -67,6 +73,27 @@ async function LoadMap()
     // TileImage.onload = DrawMap;
 }
 
+
+async function LoadTileset()
+{
+    const Response = await fetch("Maps/USA_Roads.tsj");
+
+    TilesetData = await Response.json();
+
+    TileInfo = [];
+
+    for(const Tile of TilesetData.tiles)
+    {
+        TileInfo[Tile.id] = {};
+
+        for(const Property of Tile.properties)
+        {
+            TileInfo[Tile.id][Property.name] = Property.value;
+        }
+    }
+
+    console.log(TileInfo);
+}
 
 /*************************************************/
 /* SECTION 4 - DRAW MAP                          */
@@ -243,31 +270,6 @@ function DrawVehicles()
 }
 
 
-function GetExit(TileNumber)
-{
-    switch(TileNumber)
-    {
-        case 0:  return "S,W";
-        case 1:  return "S";
-        case 2:  return "E,S";
-        case 3:  return "N";
-        case 4:  return "W";
-        case 5:  return "E,W";
-        case 6:  return "E,W";
-        case 7:  return "E";
-        case 8:  return "N,W";
-        case 9:  return "N";
-        case 10: return "N,S";
-        case 11: return "S";
-        case 12: return "N,E";
-        case 13: return "N";
-        case 14: return "E";
-        case 15: return "N,W";
-
-        default:
-            return "";
-    }
-}
 
 /*************************************************/
 /* SECTION 6 - GAME LOOP                         */
