@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.19";
+const VERSION = "v0.1.21";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -204,41 +204,40 @@ function UpdateVehicles()
 
     Car01.Distance += Car01.Speed;
 
-    if(Car01.Distance >= TILE_WIDTH)
-    {
-        Car01.Distance = 0;
-
-        switch(Car01.Direction)
-        {
-            case NORTH:
-                Car01.TileY--;
-                break;
-
-            case EAST:
-                Car01.TileX++;
-                break;
-
-            case SOUTH:
-                Car01.TileY++;
-                break;
-
-            case WEST:
-                Car01.TileX--;
-                break;
-        }
-
-        let TileNumber = GetTileNumber(
-          Car01.TileX,
-          Car01.TileY
-        );
-
-let Exit = GetExit(TileNumber);
-
-if(Exit)
+if(Car01.Distance >= TILE_WIDTH)
 {
-    Car01.Direction =
-        ChooseDirectionFromExit(Exit);
-}
+    Car01.Distance -= TILE_WIDTH;
+
+    switch(Car01.Direction)
+    {
+        case NORTH:
+            Car01.TileY--;
+            break;
+
+        case EAST:
+            Car01.TileX++;
+            break;
+
+        case SOUTH:
+            Car01.TileY++;
+            break;
+
+        case WEST:
+            Car01.TileX--;
+            break;
+    }
+
+    let TileNumber = GetTileNumber(
+        Car01.TileX,
+        Car01.TileY
+    );
+
+    let Exit = GetExit(TileNumber);
+
+    if(Exit != "")
+    {
+        Car01.Direction =
+            ChooseDirectionFromExit(Exit);
     }
 }
 
