@@ -3,7 +3,7 @@
 /*************************************************/
 /* SECTION 1 - GLOBALS                           */
 /*************************************************/
-const VERSION = "v0.1.7";
+const VERSION = "v0.1.8";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -130,7 +130,8 @@ let Car01 =
     Direction : SOUTH,
 
     Speed : 1,
-    Moving : true
+Moving : true,
+Distance : 0
 };
 
 function InitVehicles()
@@ -165,6 +166,38 @@ function UpdateVehicles()
         case WEST:
             Car01.PixelX -= Car01.Speed;
             break;
+    }
+
+    Car01.Distance += Car01.Speed;
+
+    if(Car01.Distance >= TILE_WIDTH)
+    {
+        Car01.Distance = 0;
+
+        switch(Car01.Direction)
+        {
+            case NORTH:
+                Car01.TileY--;
+                break;
+
+            case EAST:
+                Car01.TileX++;
+                break;
+
+            case SOUTH:
+                Car01.TileY++;
+                break;
+
+            case WEST:
+                Car01.TileX--;
+                break;
+        }
+
+        console.log(
+            "Nieuwe tegel:",
+            Car01.TileX,
+            Car01.TileY
+        );
     }
 }
 
