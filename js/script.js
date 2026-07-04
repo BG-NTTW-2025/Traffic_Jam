@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.13";
+const VERSION = "v0.1.14";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -270,6 +270,31 @@ function DrawVehicles()
 }
 
 
+function GetExit(TileNumber)
+{
+    switch(TileNumber)
+    {
+        case 0:  return "S,W";
+        case 1:  return "S";
+        case 2:  return "E,S";
+        case 3:  return "N";
+        case 4:  return "W";
+        case 5:  return "E,W";
+        case 6:  return "E,W";
+        case 7:  return "E";
+        case 8:  return "N,W";
+        case 9:  return "N";
+        case 10: return "N,S";
+        case 11: return "S";
+        case 12: return "N,E";
+        case 13: return "N";
+        case 14: return "E";
+        case 15: return "N,W";
+
+        default:
+            return "";
+    }
+}
 
 /*************************************************/
 /* SECTION 6 - GAME LOOP                         */
