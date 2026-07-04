@@ -3,7 +3,7 @@
 /*************************************************/
 /* SECTION 1 - GLOBALS                           */
 /*************************************************/
-const VERSION = "v0.1.3";
+const VERSION = "v0.1.4";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
