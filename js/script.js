@@ -3,7 +3,7 @@
 /*************************************************/
 /* SECTION 1 - GLOBALS                           */
 /*************************************************/
-const VERSION = "v0.1.8";
+const VERSION = "v0.1.9";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -108,6 +108,13 @@ function DrawMap()
     }
 }	
 
+function GetTileNumber(TileX, TileY)
+{
+    let Layer = MapData.layers[0].data;
+
+    return Layer[TileY * MapData.width + TileX] - 1;
+}
+
 /*************************************************/
 /* SECTION 5 - VEHICLES                          */
 /*************************************************/
@@ -193,11 +200,18 @@ function UpdateVehicles()
                 break;
         }
 
-        console.log(
-            "Nieuwe tegel:",
-            Car01.TileX,
-            Car01.TileY
+        let TileNumber = GetTileNumber(
+          Car01.TileX,
+          Car01.TileY
         );
+
+console.log(
+    "Tile:",
+    TileNumber,
+    "Pos:",
+    Car01.TileX,
+    Car01.TileY
+);
     }
 }
 
