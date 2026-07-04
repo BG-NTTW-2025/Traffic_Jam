@@ -3,23 +3,20 @@
 <html lang="nl">
 
 <head>
-
-<meta charset="UTF-8">
-
-<title>Traffic Engine</title>
-
-<link rel="stylesheet" href="css/style.css">
-
+    <meta charset="UTF-8">
+    <title>Traffic Engine</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    alert(
-        "Gestart"
-    );
+
 <canvas id="GameCanvas"></canvas>
 
-<script src="js/script.js?v=001"></script>
+<script>
+let s = document.createElement("script");
+s.src = "js/script.js?v=" + Date.now();
+document.body.appendChild(s);
+</script>
 
 </body>
-
 </html>
