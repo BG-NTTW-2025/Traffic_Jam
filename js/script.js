@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.17";
+const VERSION = "v0.1.18";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -266,6 +266,17 @@ function DrawVehicles()
     );
 
     Ctx.restore();
+}
+
+function GetExit(TileNumber)
+{
+    if(!TileInfo[TileNumber])
+        return "";
+
+    if(!TileInfo[TileNumber].Exit)
+        return "";
+
+    return TileInfo[TileNumber].Exit;
 }
 
 function ChooseDirectionFromExit(Exit)
