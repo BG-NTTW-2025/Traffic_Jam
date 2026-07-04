@@ -168,10 +168,6 @@ function UpdateVehicles()
     }
 }
 
-function UpdateVehicles()
-{
-    // Nog leeg.
-}
 
 function DrawVehicles()
 {
