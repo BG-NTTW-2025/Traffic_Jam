@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.22";
+const VERSION = "v0.1.23";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -162,6 +162,7 @@ let Car01 =
     PixelY : 0,
 
     Direction : SOUTH,
+	NextDirection : SOUTH,
 
     Speed : 1,
 Moving : true,
@@ -176,6 +177,7 @@ function InitVehicles()
 
     Car01.PixelX = Car01.TileX * TILE_WIDTH;
     Car01.PixelY = Car01.TileY * TILE_HEIGHT;
+	Car01.NextDirection = Car01.Direction;
 }
 
 function UpdateVehicles()
@@ -210,22 +212,13 @@ if(Car01.Distance >= TILE_WIDTH)
 
     switch(Car01.Direction)
     {
-        case NORTH:
-            Car01.TileY--;
-            break;
-
-        case EAST:
-            Car01.TileX++;
-            break;
-
-        case SOUTH:
-            Car01.TileY++;
-            break;
-
-        case WEST:
-            Car01.TileX--;
-            break;
+        case NORTH: Car01.TileY--; break;
+        case EAST:  Car01.TileX++; break;
+        case SOUTH: Car01.TileY++; break;
+        case WEST:  Car01.TileX--; break;
     }
+
+    Car01.Direction = Car01.NextDirection;
 
     let TileNumber = GetTileNumber(
         Car01.TileX,
@@ -236,7 +229,7 @@ if(Car01.Distance >= TILE_WIDTH)
 
     if(Exit != "")
     {
-        Car01.Direction =
+        Car01.NextDirection =
             ChooseDirectionFromExit(Exit);
     }
 }
