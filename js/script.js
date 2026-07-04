@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.15";
+const VERSION = "v0.1.16";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -269,7 +269,42 @@ function DrawVehicles()
     Ctx.restore();
 }
 
+function ChooseDirectionFromExit(Exit)
+{
+    if(!Exit || Exit.length == 0)
+        return;
 
+    let Choice;
+
+    if(Exit.length == 1)
+    {
+        Choice = Exit[0];
+    }
+    else
+    {
+        Choice =
+            Exit[
+                Math.floor(
+                    Math.random() * Exit.length
+                )
+            ];
+    }
+
+    switch(Choice)
+    {
+        case "N":
+            return NORTH;
+
+        case "E":
+            return EAST;
+
+        case "S":
+            return SOUTH;
+
+        case "W":
+            return WEST;
+    }
+}
 
 /*************************************************/
 /* SECTION 6 - GAME LOOP                         */
