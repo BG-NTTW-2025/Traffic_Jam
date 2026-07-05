@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.23";
+const VERSION = "v0.1.24";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -16,7 +16,7 @@ let Ctx;
 
 let MapData;
 let TileImage;
-
+let Paused = false;
 
 /*************************************************/
 /* SECTION 2 - INITIALIZE                        */
@@ -37,6 +37,18 @@ InitVehicles();
 
 requestAnimationFrame(GameLoop);
 }
+
+window.addEventListener(
+    "keydown",
+    function(Event)
+    {
+        if(Event.key == "p" || Event.key == "P")
+        {
+            Paused = !Paused;
+            console.log("Paused:", Paused);
+        }
+    }
+);
 
 
 /*************************************************/
@@ -340,6 +352,19 @@ function GameLoop()
     Update();
 
     Draw();
+
+    requestAnimationFrame(GameLoop);
+}
+
+function GameLoop()
+{
+    if(!Paused)
+    {
+        UpdateVehicles();
+    }
+
+    DrawMap();
+    DrawVehicles();
 
     requestAnimationFrame(GameLoop);
 }
