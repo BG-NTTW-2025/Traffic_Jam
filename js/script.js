@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.25";
+const VERSION = "v0.1.26";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -291,21 +291,23 @@ function GetExit(TileNumber)
 
 function ChooseDirectionFromExit(Exit)
 {
-    let Choice;
+    Exit = String(Exit).trim();
 
-    if(Exit.length == 1)
+    if(Exit.length == 0)
     {
-        Choice = Exit[0];
+        console.error("Geen Exit op deze tegel");
+        Paused = true;
+        return Car01.Direction;
     }
-    else
-    {
-        Choice =
-            Exit[
-                Math.floor(
-                    Math.random() * Exit.length
-                )
-            ];
-    }
+
+    let Choice =
+        Exit[
+            Math.floor(
+                Math.random() * Exit.length
+            )
+        ];
+
+    console.log("Exit:", Exit, "Choice:", Choice);
 
     switch(Choice)
     {
@@ -316,7 +318,8 @@ function ChooseDirectionFromExit(Exit)
     }
 
     console.error("Ongeldige Exit:", Exit);
-    return SOUTH;
+    Paused = true;
+    return Car01.Direction;
 }
 
 function GetCarRotation()
