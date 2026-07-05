@@ -12,7 +12,7 @@ let Ctx;
 
 let MapData;
 let TileImage;
-let Paused = false;
+
 
 /*************************************************/
 /* SECTION 2 - INITIALIZE                        */
@@ -31,18 +31,6 @@ InitVehicles();
 
 requestAnimationFrame(GameLoop);
 }
-
-window.addEventListener(
-    "keydown",
-    function(Event)
-    {
-        if(Event.key == "p" || Event.key == "P")
-        {
-            Paused = !Paused;
-            console.log("Paused:", Paused);
-        }
-    }
-);
 
 
 /*************************************************/
@@ -203,19 +191,6 @@ function GameLoop()
     Update();
 
     Draw();
-
-    requestAnimationFrame(GameLoop);
-}
-
-function GameLoop()
-{
-    if(!Paused)
-    {
-        UpdateVehicles();
-    }
-
-    DrawMap();
-    DrawVehicles();
 
     requestAnimationFrame(GameLoop);
 }
