@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.29";
+const VERSION = "v0.1.31";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -158,10 +158,6 @@ function GetTileNumber(TileX, TileY)
 /* SECTION 5 - VEHICLES                          */
 /*************************************************/
 
-const CAR_LENGTH = 40;
-const CAR_HALF_LENGTH = CAR_LENGTH / 2;
-const TURN_SPEED = 0.12;
-
 const NORTH = 0;
 const EAST  = 1;
 const SOUTH = 2;
@@ -178,10 +174,7 @@ let Car01 =
     PixelY : 0,
 
     Direction : SOUTH,
-    TargetDirection : SOUTH,
-
-    Angle : Math.PI,
-    TargetAngle : Math.PI,
+    NextDirection : SOUTH,
 
     Speed : 1,
     Moving : true,
@@ -199,12 +192,32 @@ function InitVehicles()
     Car01.PixelY = Car01.TileY * TILE_HEIGHT;
 }
 
+function GetNextTileX(Car)
+{
+    if(Car.Direction == EAST)
+        return Car.TileX + 1;
+
+    if(Car.Direction == WEST)
+        return Car.TileX - 1;
+
+    return Car.TileX;
+}
+
+function GetNextTileY(Car)
+{
+    if(Car.Direction == SOUTH)
+        return Car.TileY + 1;
+
+    if(Car.Direction == NORTH)
+        return Car.TileY - 1;
+
+    return Car.TileY;
+}
+
 function UpdateVehicles()
 {
     if(!Car01.Moving)
         return;
-
-    UpdateCarAngle();
 
     switch(Car01.Direction)
     {
@@ -228,7 +241,7 @@ function UpdateVehicles()
     Car01.Distance += Car01.Speed;
 
     if(
-        Car01.Distance >= TILE_WIDTH - CAR_HALF_LENGTH &&
+        Car01.Distance >= TILE_WIDTH - 20 &&
         !Car01.CheckedThisTile
     )
     {
@@ -244,30 +257,23 @@ function UpdateVehicles()
 
         let Exit = GetExit(TileNumber);
 
-        Car01.TargetDirection =
+        Car01.NextDirection =
             ChooseDirectionFromExit(Exit);
-
-        Car01.TargetAngle =
-            DirectionToAngle(Car01.TargetDirection);
     }
 
     if(Car01.Distance >= TILE_WIDTH)
     {
-        Car01.Distance = 0;
-        Car01.CheckedThisTile = false;
+        Car01.Distance -= TILE_WIDTH;
 
         Car01.TileX = GetNextTileX(Car01);
         Car01.TileY = GetNextTileY(Car01);
 
-        Car01.Direction = Car01.TargetDirection;
+        Car01.Direction = Car01.NextDirection;
 
         Car01.PixelX = Car01.TileX * TILE_WIDTH;
         Car01.PixelY = Car01.TileY * TILE_HEIGHT;
 
-        Car01.Angle =
-            DirectionToAngle(Car01.Direction);
-
-        Car01.TargetAngle = Car01.Angle;
+        Car01.CheckedThisTile = false;
     }
 }
 
@@ -283,7 +289,7 @@ function DrawVehicles()
         Car01.PixelY + TILE_HEIGHT / 2
     );
 
-    Ctx.rotate(Car01.Angle);
+    Ctx.rotate(GetCarRotation());
 
     Ctx.drawImage(
         CarImage,
@@ -336,55 +342,6 @@ function GetCarRotation()
     }
 
     return 0;
-}
-
-function DirectionToAngle(Direction)
-{
-    switch(Direction)
-    {
-        case NORTH: return 0;
-        case EAST:  return Math.PI / 2;
-        case SOUTH: return Math.PI;
-        case WEST:  return -Math.PI / 2;
-    }
-
-    return Math.PI;
-}
-
-function GetNextTileX(Car)
-{
-    if(Car.Direction == EAST)
-        return Car.TileX + 1;
-
-    if(Car.Direction == WEST)
-        return Car.TileX - 1;
-
-    return Car.TileX;
-}
-
-function GetNextTileY(Car)
-{
-    if(Car.Direction == SOUTH)
-        return Car.TileY + 1;
-
-    if(Car.Direction == NORTH)
-        return Car.TileY - 1;
-
-    return Car.TileY;
-}
-
-function UpdateCarAngle()
-{
-    let Difference =
-        Car01.TargetAngle - Car01.Angle;
-
-    if(Difference > Math.PI)
-        Difference -= Math.PI * 2;
-
-    if(Difference < -Math.PI)
-        Difference += Math.PI * 2;
-
-    Car01.Angle += Difference * TURN_SPEED;
 }
 
 /*************************************************/
