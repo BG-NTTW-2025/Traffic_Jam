@@ -178,13 +178,8 @@ let Car01 =
 
     Speed : 1,
     Moving : true,
-
-    State : "STRAIGHT",
-
     Distance : 0,
-    TurnDistance : 0,
-
-    OldDirection : SOUTH
+    CheckedThisTile : false
 };
 
 function InitVehicles()
@@ -219,15 +214,12 @@ function GetNextTileY(Car)
     return Car.TileY;
 }
 
-const CAR_LENGTH = 40;
-const CAR_HALF = 20;
-
-const NOSE_CHECK_DISTANCE = TILE_WIDTH - CAR_HALF;
-const TURN_DISTANCE = 20;
-
-function MoveDirection(Direction)
+function UpdateVehicles()
 {
-    switch(Direction)
+    if(!Car01.Moving)
+        return;
+
+    switch(Car01.Direction)
     {
         case NORTH:
             Car01.PixelY -= Car01.Speed;
@@ -245,132 +237,43 @@ function MoveDirection(Direction)
             Car01.PixelX -= Car01.Speed;
             break;
     }
-}
-
-function MoveDiagonal(DirectionA, DirectionB)
-{
-    MoveDirection(DirectionA);
-    MoveDirection(DirectionB);
-}
-
-function GetNextTileX(TileX, Direction)
-{
-    if(Direction == EAST)
-        return TileX + 1;
-
-    if(Direction == WEST)
-        return TileX - 1;
-
-    return TileX;
-}
-
-function GetNextTileY(TileY, Direction)
-{
-    if(Direction == SOUTH)
-        return TileY + 1;
-
-    if(Direction == NORTH)
-        return TileY - 1;
-
-    return TileY;
-}
-
-function DirectionToAngle(Direction)
-{
-    switch(Direction)
-    {
-        case NORTH: return 0;
-        case EAST:  return Math.PI / 2;
-        case SOUTH: return Math.PI;
-        case WEST:  return -Math.PI / 2;
-    }
-
-    return 0;
-}
-
-function MiddleTurnAngle(DirectionA, DirectionB)
-{
-    let A = DirectionToAngle(DirectionA);
-    let B = DirectionToAngle(DirectionB);
-
-    let Diff = B - A;
-
-    if(Diff > Math.PI)
-        Diff -= Math.PI * 2;
-
-    if(Diff < -Math.PI)
-        Diff += Math.PI * 2;
-
-    return A + Diff / 2;
-}
-
-function UpdateVehicles()
-{
-    if(!Car01.Moving)
-        return;
-
-    if(Car01.State == "TURN")
-    {
-        MoveDiagonal(
-            Car01.OldDirection,
-            Car01.NextDirection
-        );
-
-        Car01.TurnDistance += Car01.Speed;
-
-        if(Car01.TurnDistance >= TURN_DISTANCE)
-        {
-            Car01.State = "STRAIGHT";
-            Car01.TurnDistance = 0;
-
-            Car01.Direction = Car01.NextDirection;
-            Car01.Distance = CAR_HALF;
-        }
-
-        return;
-    }
-
-    MoveDirection(Car01.Direction);
 
     Car01.Distance += Car01.Speed;
 
-    if(Car01.Distance >= NOSE_CHECK_DISTANCE)
+    if(
+        Car01.Distance >= TILE_WIDTH - 20 &&
+        !Car01.CheckedThisTile
+    )
     {
-        let NewTileX = GetNextTileX(
-            Car01.TileX,
-            Car01.Direction
-        );
+        Car01.CheckedThisTile = true;
 
-        let NewTileY = GetNextTileY(
-            Car01.TileY,
-            Car01.Direction
-        );
+        let NextTileX = GetNextTileX(Car01);
+        let NextTileY = GetNextTileY(Car01);
 
         let TileNumber = GetTileNumber(
-            NewTileX,
-            NewTileY
+            NextTileX,
+            NextTileY
         );
 
         let Exit = GetExit(TileNumber);
 
         Car01.NextDirection =
             ChooseDirectionFromExit(Exit);
+    }
 
-        Car01.TileX = NewTileX;
-        Car01.TileY = NewTileY;
+    if(Car01.Distance >= TILE_WIDTH)
+    {
+        Car01.Distance -= TILE_WIDTH;
 
-        Car01.Distance = -CAR_HALF;
+        Car01.TileX = GetNextTileX(Car01);
+        Car01.TileY = GetNextTileY(Car01);
 
-        if(Car01.NextDirection != Car01.Direction)
-        {
-            Car01.OldDirection = Car01.Direction;
-            Car01.State = "TURN";
-            Car01.TurnDistance = 0;
-        }
-        else
-        {
-            Car01.Direction = Car01.NextDirection;
-        }
+        Car01.Direction = Car01.NextDirection;
+
+        Car01.PixelX = Car01.TileX * TILE_WIDTH;
+        Car01.PixelY = Car01.TileY * TILE_HEIGHT;
+
+        Car01.CheckedThisTile = false;
     }
 }
 
@@ -386,21 +289,7 @@ function DrawVehicles()
         Car01.PixelY + TILE_HEIGHT / 2
     );
 
-if(Car01.State == "TURN")
-{
-    Ctx.rotate(
-        MiddleTurnAngle(
-            Car01.OldDirection,
-            Car01.NextDirection
-        )
-    );
-}
-else
-{
-    Ctx.rotate(
-        DirectionToAngle(Car01.Direction)
-    );
-}
+    Ctx.rotate(GetCarRotation());
 
     Ctx.drawImage(
         CarImage,
@@ -454,6 +343,10 @@ function GetCarRotation()
 
     return 0;
 }
+
+/*************************************************/
+/* SECTION 6 - GAME LOOP                         */
+/*************************************************/
 
 /*************************************************/
 /* SECTION 6 - GAME LOOP                         */
