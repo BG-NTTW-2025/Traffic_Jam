@@ -3,7 +3,11 @@
 /*************************************************/
 /* SECTION 1 - GLOBALS                           */
 /*************************************************/
-const VERSION = "v0.1.26";
+
+let TilesetData;
+
+let TileInfo = [];
+const VERSION = "v0.1.23";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -26,6 +30,8 @@ async function Init()
     Ctx = Canvas.getContext("2d");
 
 await LoadMap();
+
+await LoadTileset();
 
 InitVehicles();
 
@@ -68,6 +74,27 @@ async function LoadMap()
 }
 
 
+async function LoadTileset()
+{
+    const Response = await fetch("Maps/USA_Roads.tsj");
+
+    TilesetData = await Response.json();
+
+    TileInfo = [];
+
+    for(const Tile of TilesetData.tiles)
+    {
+        TileInfo[Tile.id] = {};
+
+        for(const Property of Tile.properties)
+        {
+            TileInfo[Tile.id][Property.name] = Property.value;
+        }
+    }
+
+    console.log(TileInfo);
+}
+
 /*************************************************/
 /* SECTION 4 - DRAW MAP                          */
 /*************************************************/
@@ -108,6 +135,13 @@ function DrawMap()
     }
 }	
 
+function GetTileNumber(TileX, TileY)
+{
+    let Layer = MapData.layers[0].data;
+
+    return Layer[TileY * MapData.width + TileX] - 1;
+}
+
 /*************************************************/
 /* SECTION 5 - VEHICLES                          */
 /*************************************************/
@@ -127,7 +161,11 @@ let Car01 =
     PixelX : 0,
     PixelY : 0,
 
-    Direction : NORTH
+    Direction : SOUTH,
+
+    Speed : 1,
+Moving : true,
+Distance : 0
 };
 
 function InitVehicles()
@@ -142,7 +180,65 @@ function InitVehicles()
 
 function UpdateVehicles()
 {
-    // Nog leeg.
+    if(!Car01.Moving)
+        return;
+
+    switch(Car01.Direction)
+    {
+        case NORTH:
+            Car01.PixelY -= Car01.Speed;
+            break;
+
+        case EAST:
+            Car01.PixelX += Car01.Speed;
+            break;
+
+        case SOUTH:
+            Car01.PixelY += Car01.Speed;
+            break;
+
+        case WEST:
+            Car01.PixelX -= Car01.Speed;
+            break;
+    }
+
+    Car01.Distance += Car01.Speed;
+
+if(Car01.Distance >= TILE_WIDTH)
+{
+    Car01.Distance -= TILE_WIDTH;
+
+    switch(Car01.Direction)
+    {
+        case NORTH:
+            Car01.TileY--;
+            break;
+
+        case EAST:
+            Car01.TileX++;
+            break;
+
+        case SOUTH:
+            Car01.TileY++;
+            break;
+
+        case WEST:
+            Car01.TileX--;
+            break;
+    }
+
+    let TileNumber = GetTileNumber(
+        Car01.TileX,
+        Car01.TileY
+    );
+
+let Exit = GetExit(TileNumber);
+
+Car01.Direction =
+    ChooseDirectionFromExit(Exit);
+
+
+}
 }
 
 function DrawVehicles()
@@ -157,7 +253,7 @@ function DrawVehicles()
         Car01.PixelY + TILE_HEIGHT / 2
     );
 
-    Ctx.rotate(Math.PI);
+    Ctx.rotate(GetCarRotation());
 
     Ctx.drawImage(
         CarImage,
@@ -170,6 +266,59 @@ function DrawVehicles()
     Ctx.restore();
 }
 
+function GetExit(TileNumber)
+{
+    if(!TileInfo[TileNumber])
+        return "";
+
+    if(!TileInfo[TileNumber].Exit)
+        return "";
+
+    return TileInfo[TileNumber].Exit;
+}
+
+function ChooseDirectionFromExit(Exit)
+{
+    let Choice;
+
+    if(Exit.length == 1)
+    {
+        Choice = Exit[0];
+    }
+    else
+    {
+        Choice =
+            Exit[
+                Math.floor(
+                    Math.random() * Exit.length
+                )
+            ];
+    }
+
+    switch(Choice)
+    {
+        case "N": return NORTH;
+        case "E": return EAST;
+        case "S": return SOUTH;
+        case "W": return WEST;
+    }
+
+    console.error("Ongeldige Exit:", Exit);
+    return SOUTH;
+}
+
+function GetCarRotation()
+{
+    switch(Car01.Direction)
+    {
+        case NORTH: return 0;
+        case EAST:  return Math.PI / 2;
+        case SOUTH: return Math.PI;
+        case WEST:  return -Math.PI / 2;
+    }
+
+    return 0;
+}
 
 /*************************************************/
 /* SECTION 6 - GAME LOOP                         */
