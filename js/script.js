@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.32";
+const VERSION = "v0.1.31";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -179,12 +179,7 @@ let Car01 =
     Speed : 1,
     Moving : true,
     Distance : 0,
-
-    CheckedThisTile : false,
-
-    Turning : false,
-    TurnDistance : 0,
-    TurnDirection : SOUTH
+    CheckedThisTile : false
 };
 
 function InitVehicles()
@@ -219,18 +214,11 @@ function GetNextTileY(Car)
     return Car.TileY;
 }
 
-function IsTurn(OldDirection, NewDirection)
+function UpdateVehicles()
 {
-    return OldDirection != NewDirection;
-}
+    if(!Car01.Moving)
+        return;
 
-function GetMiddleAngleDirection(OldDirection, NewDirection)
-{
-    return NewDirection;
-}
-
-function MoveCarStraight()
-{
     switch(Car01.Direction)
     {
         case NORTH:
@@ -249,49 +237,6 @@ function MoveCarStraight()
             Car01.PixelX -= Car01.Speed;
             break;
     }
-}
-
-function MoveCarDiagonal()
-{
-    if(Car01.Direction == NORTH || Car01.NextDirection == NORTH)
-        Car01.PixelY -= Car01.Speed;
-
-    if(Car01.Direction == SOUTH || Car01.NextDirection == SOUTH)
-        Car01.PixelY += Car01.Speed;
-
-    if(Car01.Direction == EAST || Car01.NextDirection == EAST)
-        Car01.PixelX += Car01.Speed;
-
-    if(Car01.Direction == WEST || Car01.NextDirection == WEST)
-        Car01.PixelX -= Car01.Speed;
-}
-
-function UpdateVehicles()
-{
-    if(!Car01.Moving)
-        return;
-
-    if(Car01.Turning)
-    {
-        MoveCarDiagonal();
-
-        Car01.TurnDistance += Car01.Speed;
-
-        if(Car01.TurnDistance >= 40)
-        {
-            Car01.Turning = false;
-            Car01.TurnDistance = 0;
-
-            Car01.Direction = Car01.NextDirection;
-
-            Car01.PixelX = Car01.TileX * TILE_WIDTH;
-            Car01.PixelY = Car01.TileY * TILE_HEIGHT;
-        }
-
-        return;
-    }
-
-    MoveCarStraight();
 
     Car01.Distance += Car01.Speed;
 
@@ -314,12 +259,6 @@ function UpdateVehicles()
 
         Car01.NextDirection =
             ChooseDirectionFromExit(Exit);
-
-        if(IsTurn(Car01.Direction, Car01.NextDirection))
-        {
-            Car01.Turning = true;
-            Car01.TurnDistance = 0;
-        }
     }
 
     if(Car01.Distance >= TILE_WIDTH)
@@ -329,13 +268,10 @@ function UpdateVehicles()
         Car01.TileX = GetNextTileX(Car01);
         Car01.TileY = GetNextTileY(Car01);
 
-        if(!Car01.Turning)
-        {
-            Car01.Direction = Car01.NextDirection;
+        Car01.Direction = Car01.NextDirection;
 
-            Car01.PixelX = Car01.TileX * TILE_WIDTH;
-            Car01.PixelY = Car01.TileY * TILE_HEIGHT;
-        }
+        Car01.PixelX = Car01.TileX * TILE_WIDTH;
+        Car01.PixelY = Car01.TileY * TILE_HEIGHT;
 
         Car01.CheckedThisTile = false;
     }
