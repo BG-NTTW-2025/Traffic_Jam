@@ -15,7 +15,7 @@
                 {
                  "name":"Exit",
                  "type":"string",
-                 "value":"S,W"
+                 "value":"SW"
                 }]
         }, 
         {
@@ -24,7 +24,7 @@
                 {
                  "name":"Exit",
                  "type":"string",
-                 "value":"N,W"
+                 "value":"NW"
                 }]
         }, 
         {
@@ -33,7 +33,7 @@
                 {
                  "name":"Exit",
                  "type":"string",
-                 "value":"N,E"
+                 "value":"NE"
                 }]
         }, 
         {
@@ -42,7 +42,7 @@
                 {
                  "name":"Exit",
                  "type":"string",
-                 "value":"E,S"
+                 "value":"ES"
                 }]
         }, 
         {
