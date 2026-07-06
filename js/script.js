@@ -358,7 +358,7 @@ function Update()
 function Draw()
 {
     DrawMap();
-	DrawVehicles();
+	console.log("State:", Car01.State);
 }
 
 function GameLoop()
