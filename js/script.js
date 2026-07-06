@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.39";
+const VERSION = "v0.1.40";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -329,6 +329,19 @@ function ChooseDirectionFromExit(Exit)
 
     alert("Ongeldige Exit: " + Exit);
     Paused = true;
+}
+
+function DirectionToAngle(Direction)
+{
+    switch(Direction)
+    {
+        case NORTH: return 0;
+        case EAST:  return Math.PI / 2;
+        case SOUTH: return Math.PI;
+        case WEST:  return -Math.PI / 2;
+    }
+
+    return 0;
 }
 
 function GetCarRotation()
