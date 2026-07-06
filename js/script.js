@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.51";
+const VERSION = "v0.1.52";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -164,8 +164,6 @@ function GetTileNumber(TileX, TileY)
     return Layer[Index] - 1;
 }
 
-
-
 /*************************************************/
 /* SECTION 5 - VEHICLES                          */
 /*************************************************/
@@ -199,53 +197,6 @@ let Car01 =
     CheckedThisTile : false
 };
 
-function GetExit(TileNumber)
-{
-    if(TileNumber < 0)
-        return "";
-
-    if(!TileInfo[TileNumber])
-        return "";
-
-    if(!TileInfo[TileNumber].Exit)
-        return "";
-
-    return TileInfo[TileNumber].Exit;
-}
-
-function DirectionToAngle(Direction)
-{
-    if(Direction == NORTH) return 0;
-    if(Direction == EAST)  return Math.PI / 2;
-    if(Direction == SOUTH) return Math.PI;
-    if(Direction == WEST)  return Math.PI * 1.5;
-
-    return 0;
-}
-
-function GetCarRotation()
-{
-    if(Car01.State == "TURN")
-    {
-        let StartAngle = DirectionToAngle(Car01.OldDirection);
-        let EndAngle   = DirectionToAngle(Car01.NewDirection);
-
-        let Difference = EndAngle - StartAngle;
-
-        if(Difference > Math.PI)
-            Difference -= Math.PI * 2;
-
-        if(Difference < -Math.PI)
-            Difference += Math.PI * 2;
-
-        let Progress = Car01.TurnTicks / Car01.TurnMaxTicks;
-
-        return StartAngle + Difference * Progress;
-    }
-
-    return DirectionToAngle(Car01.Direction);
-}
-
 function InitVehicles()
 {
     console.log("Traffic Engine " + VERSION);
@@ -276,6 +227,28 @@ function GetDirectionVector(Direction)
     return { X:0, Y:0 };
 }
 
+function GetCarRotation()
+{
+    if(Car01.State == "TURN")
+    {
+        let StartAngle = DirectionToAngle(Car01.OldDirection);
+        let EndAngle   = DirectionToAngle(Car01.NewDirection);
+
+        let Difference = EndAngle - StartAngle;
+
+        if(Difference > Math.PI)
+            Difference -= Math.PI * 2;
+
+        if(Difference < -Math.PI)
+            Difference += Math.PI * 2;
+
+        let Progress = Car01.TurnTicks / Car01.TurnMaxTicks;
+
+        return StartAngle + Difference * Progress;
+    }
+
+    return DirectionToAngle(Car01.Direction);
+}
 
 function ExitHasDirection(Exit, Direction)
 {
@@ -466,6 +439,78 @@ function UpdateVehicles()
         UpdateTurn(Car01);
     else
         UpdateDrive(Car01);
+}
+
+function DrawVehicles()
+{
+    if(!CarImage.complete)
+        return;
+
+    Ctx.save();
+
+    Ctx.translate(
+        Car01.PixelX + TILE_WIDTH / 2,
+        Car01.PixelY + TILE_HEIGHT / 2
+    );
+
+    Ctx.rotate(GetCarRotation());
+
+    Ctx.drawImage(
+        CarImage,
+        -20,
+        -20,
+        40,
+        40
+    );
+
+    Ctx.restore();
+}
+
+function GetExit(TileNumber)
+{
+    if(TileNumber < 0)
+        return "";
+
+    if(!TileInfo[TileNumber])
+        return "";
+
+    if(!TileInfo[TileNumber].Exit)
+        return "";
+
+    return TileInfo[TileNumber].Exit;
+}
+
+function DirectionToAngle(Direction)
+{
+    if(Direction == NORTH) return 0;
+    if(Direction == EAST)  return Math.PI / 2;
+    if(Direction == SOUTH) return Math.PI;
+    if(Direction == WEST)  return Math.PI * 1.5;
+
+    return 0;
+}
+
+function GetCarRotation()
+{
+    if(Car01.State == "TURN")
+    {
+        let StartAngle = DirectionToAngle(Car01.OldDirection);
+        let EndAngle   = DirectionToAngle(Car01.NewDirection);
+
+        let Difference = EndAngle - StartAngle;
+
+        if(Difference > Math.PI)
+            Difference -= Math.PI * 2;
+
+        if(Difference < -Math.PI)
+            Difference += Math.PI * 2;
+
+        let Progress = Car01.TurnTicks / Car01.TurnMaxTicks;
+
+        return StartAngle + Difference * Progress;
+    }
+
+    return DirectionToAngle(Car01.Direction);
 }
 
 /*************************************************/
