@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.34";
+const VERSION = "v0.1.35";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -333,13 +333,11 @@ function ChooseDirectionFromExit(Exit)
 
 function GetCarRotation()
 {
-    switch(Car01.Direction)
-    {
-        case NORTH: return 0;
-        case EAST:  return Math.PI / 2;
-        case SOUTH: return Math.PI;
-        case WEST:  return -Math.PI / 2;
-    }
+    if(Car01.State == "TURN")
+        return GetMiddleTurnAngle();
+
+    return DirectionToAngle(Car01.Direction);
+}
 
     return 0;
 }
@@ -381,6 +379,6 @@ function GameLoop()
 
     DrawMap();
     DrawVehicles();
-
+	DrawVehicles()
     requestAnimationFrame(GameLoop);
 }
