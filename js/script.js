@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.40";
+const VERSION = "v0.1.41";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -259,6 +259,15 @@ function UpdateVehicles()
 
         Car01.NextDirection =
             ChooseDirectionFromExit(Exit);
+			
+			console.log(
+    "CHECK",
+    "Tile:", TileNumber,
+    "Exit:", Exit,
+    "Direction:", Car01.Direction,
+    "NextDirection:", Car01.NextDirection
+);
+			
     }
 
     if(Car01.Distance >= TILE_WIDTH)
