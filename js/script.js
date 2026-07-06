@@ -268,8 +268,6 @@ function UpdateVehicles()
         Car01.TileX = GetNextTileX(Car01);
         Car01.TileY = GetNextTileY(Car01);
 
-        Car01.Direction = Car01.NextDirection;
-
         Car01.PixelX = Car01.TileX * TILE_WIDTH;
         Car01.PixelY = Car01.TileY * TILE_HEIGHT;
 
