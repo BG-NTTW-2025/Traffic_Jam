@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.37";
+const VERSION = "v0.1.38";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -339,12 +339,7 @@ function GetCarRotation()
     return DirectionToAngle(Car01.Direction);
 }
 
-    return 0;
-}
 
-/*************************************************/
-/* SECTION 6 - GAME LOOP                         */
-/*************************************************/
 
 /*************************************************/
 /* SECTION 6 - GAME LOOP                         */
