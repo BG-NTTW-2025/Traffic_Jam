@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.54";
+const VERSION = "v0.1.53";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -177,7 +177,6 @@ let CarImage = new Image();
 
 let Car01 =
 {
-	
     TileX : 1,
     TileY : 1,
 
@@ -196,9 +195,6 @@ let Car01 =
 
     Speed : 1,
     CheckedThisTile : false
-	
-    LastCheckedTileX : -1,
-    LastCheckedTileY : -1	
 };
 
 function InitVehicles()
@@ -399,24 +395,12 @@ function UpdateDrive(Car)
 
     if(!Car.CheckedThisTile && HasNoseReachedTileCenter(Car))
     {
-        if(
-            Car.TileX == Car.LastCheckedTileX &&
-            Car.TileY == Car.LastCheckedTileY
-        )
-        {
-            return;
-        }
-
-        Car.LastCheckedTileX = Car.TileX;
-        Car.LastCheckedTileY = Car.TileY;
-
         let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
         let Exit = GetExit(TileNumber);
 
         if(!Exit || Exit == "")
         {
             alert("Ongeldige Exit: leeg");
-            Paused = true;
             return;
         }
 
@@ -445,15 +429,8 @@ function UpdateDrive(Car)
     let LocalX = (Car.PixelX + TILE_WIDTH / 2) % TILE_WIDTH;
     let LocalY = (Car.PixelY + TILE_HEIGHT / 2) % TILE_HEIGHT;
 
-    if(
-        LocalX < 3 ||
-        LocalX > TILE_WIDTH - 3 ||
-        LocalY < 3 ||
-        LocalY > TILE_HEIGHT - 3
-    )
-    {
+    if(LocalX < 3 || LocalX > TILE_WIDTH - 3 || LocalY < 3 || LocalY > TILE_HEIGHT - 3)
         Car.CheckedThisTile = false;
-    }
 }
 
 function UpdateVehicles()
