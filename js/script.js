@@ -177,7 +177,6 @@ let CarImage = new Image();
 
 let Car01 =
 {
-	
     TileX : 1,
     TileY : 1,
 
@@ -195,10 +194,10 @@ let Car01 =
     NewDirection : SOUTH,
 
     Speed : 1,
-    CheckedThisTile : false
-	
+    CheckedThisTile : false,
+
     LastCheckedTileX : -1,
-    LastCheckedTileY : -1	
+    LastCheckedTileY : -1
 };
 
 function InitVehicles()
