@@ -227,8 +227,8 @@ let Cars =
         TurnMaxTicks : 40,
         TurnFromDirection : SOUTH,
         TurnToDirection : SOUTH
-    }
-];
+    },
+
 
     {
         Name : "Car03",
