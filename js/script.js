@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.70";
+const VERSION = "v0.1.71";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -173,7 +173,7 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-const MAX_CARS = 40;
+const MAX_CARS = 20;
 
 let SpawnCounter = 0;
 
@@ -813,6 +813,11 @@ function GetStopTicks(TileNumber)
 /* SECTION 6 - GAME LOOP                         */
 /*************************************************/
 
+const TARGET_FPS = 50;
+const FRAME_TIME = 1000 / TARGET_FPS;
+
+let LastFrameTime = 0;
+
 function Update()
 {
     UpdateVehicles();
@@ -824,14 +829,19 @@ function Draw()
     DrawVehicles();
 }
 
-function GameLoop()
+function GameLoop(TimeStamp)
 {
-    if(!Paused)
+    if(TimeStamp - LastFrameTime >= FRAME_TIME)
     {
-        Update();
-    }
+        LastFrameTime = TimeStamp;
 
-    Draw();
+        if(!Paused)
+        {
+            Update();
+        }
+
+        Draw();
+    }
 
     requestAnimationFrame(GameLoop);
 }
