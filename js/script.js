@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.73";
+const VERSION = "v0.1.72";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -495,42 +495,33 @@ function StartTurn(Car, NewDirection)
 
 function UpdateTurn(Car)
 {
-    if(Car.TurnTicks < Car.TurnMaxTicks)
-    {
-        let OldVector = GetDirectionVector(Car.OldDirection);
-        let NewVector = GetDirectionVector(Car.NewDirection);
+    let OldVector = GetDirectionVector(Car.OldDirection);
+    let NewVector = GetDirectionVector(Car.NewDirection);
 
-        let Step = 20 / Car.TurnMaxTicks;
+    let Step = 20 / Car.TurnMaxTicks;
 
-        Car.PixelX += OldVector.X * Step;
-        Car.PixelY += OldVector.Y * Step;
+    Car.PixelX += OldVector.X * Step;
+    Car.PixelY += OldVector.Y * Step;
 
-        Car.PixelX += NewVector.X * Step;
-        Car.PixelY += NewVector.Y * Step;
+    Car.PixelX += NewVector.X * Step;
+    Car.PixelY += NewVector.Y * Step;
 
-        Car.TurnTicks++;
-    }
+    Car.TurnTicks++;
 
     if(Car.TurnTicks >= Car.TurnMaxTicks)
     {
-        let TargetVector = GetDirectionVector(Car.NewDirection);
-
-        let TargetTileX = Car.TileX + TargetVector.X;
-        let TargetTileY = Car.TileY + TargetVector.Y;
-
-        if(!IsTileFree(TargetTileX, TargetTileY))
-        {
-            return;
-        }
-
-        ReserveTile(
-            TargetTileX,
-            TargetTileY,
-            GetCarIndex(Car)
-        );
-
         let TileCenterX = Car.TileX * TILE_WIDTH  + TILE_WIDTH  / 2;
         let TileCenterY = Car.TileY * TILE_HEIGHT + TILE_HEIGHT / 2;
+
+        /*
+            Harde correctie tegen afrondingsfouten.
+
+            Bij EAST/WEST moet de auto perfect op de horizontale
+            middenas van de weg liggen.
+
+            Bij NORTH/SOUTH moet de auto perfect op de verticale
+            middenas van de weg liggen.
+        */
 
         if(Car.NewDirection == EAST || Car.NewDirection == WEST)
         {
@@ -634,6 +625,10 @@ function UpdateDrive(Car)
             return;
         }
 
+        /*
+            Dezelfde tegel niet twee keer verwerken.
+        */
+
         if(
             Car.TileX == Car.LastCheckedTileX &&
             Car.TileY == Car.LastCheckedTileY
@@ -645,6 +640,27 @@ function UpdateDrive(Car)
         let PickedDirection = PickNextDirection(
             Exit,
             Car.Direction
+        );
+
+        let TargetVector = GetDirectionVector(PickedDirection);
+
+        let TargetTileX = Car.TileX + TargetVector.X;
+        let TargetTileY = Car.TileY + TargetVector.Y;
+
+        if(!IsTileFree(TargetTileX, TargetTileY))
+        {
+            Car.PixelX = OldPixelX;
+            Car.PixelY = OldPixelY;
+            Car.TileX  = OldTileX;
+            Car.TileY  = OldTileY;
+
+            return;
+        }
+
+        ReserveTile(
+            TargetTileX,
+            TargetTileY,
+            GetCarIndex(Car)
         );
 
         Car.LastCheckedTileX = Car.TileX;
@@ -668,30 +684,6 @@ function UpdateDrive(Car)
             StartTurn(Car, Car.NextDirection);
             return;
         }
-
-        let TargetVector = GetDirectionVector(Car.NextDirection);
-
-        let TargetTileX = Car.TileX + TargetVector.X;
-        let TargetTileY = Car.TileY + TargetVector.Y;
-
-        if(!IsTileFree(TargetTileX, TargetTileY))
-        {
-            Car.PixelX = OldPixelX;
-            Car.PixelY = OldPixelY;
-            Car.TileX  = OldTileX;
-            Car.TileY  = OldTileY;
-
-            Car.LastCheckedTileX = -1;
-            Car.LastCheckedTileY = -1;
-
-            return;
-        }
-
-        ReserveTile(
-            TargetTileX,
-            TargetTileY,
-            GetCarIndex(Car)
-        );
 
         Car.CheckedThisTile = true;
     }
