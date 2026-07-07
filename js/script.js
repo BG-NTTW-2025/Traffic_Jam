@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.67";
+const VERSION = "v0.1.68";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -189,87 +189,7 @@ let CarImage = new Image();
 
 let TileOccupation = [];
 
-let Cars =
-[
-    {
-        Name : "Car01",
-
-        TileX : 1,
-        TileY : 1,
-
-        PixelX : 0,
-        PixelY : 0,
-
-        Direction : SOUTH,
-        NextDirection : SOUTH,
-
-        Speed : 2,
-        Moving : true,
-        Distance : 0,
-        CheckedThisTile : false,
-
-        State : "DRIVE",
-        StopCounter : 0,
-
-        TurnTicks : 0,
-        TurnMaxTicks : 40,
-        TurnFromDirection : SOUTH,
-        TurnToDirection : SOUTH
-    },
-
-    {
-        Name : "Car02",
-
-        TileX : 1,
-        TileY : 2,
-
-        PixelX : 0,
-        PixelY : 0,
-
-        Direction : SOUTH,
-        NextDirection : SOUTH,
-
-        Speed : 2,
-        Moving : true,
-        Distance : 0,
-        CheckedThisTile : false,
-
-        State : "DRIVE",
-        StopCounter : 0,
-
-        TurnTicks : 0,
-        TurnMaxTicks : 40,
-        TurnFromDirection : SOUTH,
-        TurnToDirection : SOUTH
-    },
-
-
-    {
-        Name : "Car03",
-
-        TileX : 1,
-        TileY : 3,
-
-        PixelX : 0,
-        PixelY : 0,
-
-        Direction : SOUTH,
-        NextDirection : SOUTH,
-
-        Speed : 2,
-        Moving : true,
-        Distance : 0,
-        CheckedThisTile : false,
-
-        State : "DRIVE",
-        StopCounter : 0,
-
-        TurnTicks : 0,
-        TurnMaxTicks : 40,
-        TurnFromDirection : SOUTH,
-        TurnToDirection : SOUTH
-    }
-];
+let Cars = [];
 
 function InitVehicles()
 {
@@ -284,6 +204,15 @@ function InitVehicles()
     }
 
     InitTileOccupation();
+	
+	for(let i = 0; i < Garages.length; i++)
+{
+    CreateCar(
+        Garages[i].TileX,
+        Garages[i].TileY,
+        Garages[i].Direction
+    );
+}
 }
 
 function InitTileOccupation()
