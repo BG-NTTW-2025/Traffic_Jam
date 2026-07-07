@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.60";
+const VERSION = "v0.1.62";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -556,8 +556,36 @@ function UpdateVehicles()
 {
     for(let i = 0; i < Cars.length; i++)
     {
-        UpdateCar(Cars[i]);
+        if(Cars[i].State == "TURN")
+            UpdateTurn(Cars[i]);
+        else
+            UpdateDrive(Cars[i]);
     }
+}
+
+function DrawVehicles()
+{
+    if(!CarImage.complete)
+        return;
+
+    Ctx.save();
+
+    Ctx.translate(
+        Car01.PixelX + TILE_WIDTH / 2,
+        Car01.PixelY + TILE_HEIGHT / 2
+    );
+
+    Ctx.rotate(GetCarRotation());
+
+    Ctx.drawImage(
+        CarImage,
+        -20,
+        -20,
+        40,
+        40
+    );
+
+    Ctx.restore();
 }
 
 function DrawVehicles()
