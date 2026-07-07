@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.58";
+const VERSION = "v0.1.59";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -342,7 +342,7 @@ function HasNoseReachedTurnPoint(Car)
 
 function HasNoseReachedStopPoint(Car)
 {
-    return HasNoseReachedPoint(Car, 5);
+    return HasNoseReachedPoint(Car, 15);
 }
 
 function StartTurn(Car, NewDirection)
