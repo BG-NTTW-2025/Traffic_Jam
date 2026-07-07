@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.54";
+const VERSION = "v0.1.63";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -175,30 +175,60 @@ const WEST  = 3;
 
 let CarImage = new Image();
 
-let Car01 =
-{
-    TileX : 1,
-    TileY : 1,
+let Cars =
+[
+    {
+        Name : "Car01",
 
-    PixelX : 0,
-    PixelY : 0,
+        TileX : 1,
+        TileY : 1,
 
-    Direction : SOUTH,
-    NextDirection : SOUTH,
+        PixelX : 0,
+        PixelY : 0,
 
-    State : "DRIVE",
+        Direction : SOUTH,
+        NextDirection : SOUTH,
 
-    TurnTicks : 0,
-    TurnMaxTicks : 40,
-    OldDirection : SOUTH,
-    NewDirection : SOUTH,
+        Speed : 1,
+        Moving : true,
+        Distance : 0,
+        CheckedThisTile : false,
 
-    Speed : 1,
-    CheckedThisTile : false,
+        State : "DRIVE",
+        StopCounter : 0,
 
-    LastCheckedTileX : -1,
-    LastCheckedTileY : -1
-};
+        TurnTicks : 0,
+        TurnMaxTicks : 40,
+        TurnFromDirection : SOUTH,
+        TurnToDirection : SOUTH
+    },
+
+    {
+        Name : "Car02",
+
+        TileX : 1,
+        TileY : 2,
+
+        PixelX : 0,
+        PixelY : 0,
+
+        Direction : SOUTH,
+        NextDirection : SOUTH,
+
+        Speed : 1,
+        Moving : true,
+        Distance : 0,
+        CheckedThisTile : false,
+
+        State : "DRIVE",
+        StopCounter : 0,
+
+        TurnTicks : 0,
+        TurnMaxTicks : 40,
+        TurnFromDirection : SOUTH,
+        TurnToDirection : SOUTH
+    }
+];
 
 function InitVehicles()
 {
@@ -206,8 +236,11 @@ function InitVehicles()
 
     CarImage.src = "Images/Car01.png";
 
-    Car01.PixelX = Car01.TileX * TILE_WIDTH;
-    Car01.PixelY = Car01.TileY * TILE_HEIGHT;
+    for(let i = 0; i < Cars.length; i++)
+    {
+        Cars[i].PixelX = Cars[i].TileX * TILE_WIDTH;
+        Cars[i].PixelY = Cars[i].TileY * TILE_HEIGHT;
+    }
 }
 
 function DirectionToAngle(Direction)
@@ -230,12 +263,12 @@ function GetDirectionVector(Direction)
     return { X:0, Y:0 };
 }
 
-function GetCarRotation()
+function GetCarRotation(Car)
 {
-    if(Car01.State == "TURN")
+    if(Car.State == "TURN")
     {
-        let StartAngle = DirectionToAngle(Car01.OldDirection);
-        let EndAngle   = DirectionToAngle(Car01.NewDirection);
+        let StartAngle = DirectionToAngle(Car.OldDirection);
+        let EndAngle   = DirectionToAngle(Car.NewDirection);
 
         let Difference = EndAngle - StartAngle;
 
@@ -245,12 +278,12 @@ function GetCarRotation()
         if(Difference < -Math.PI)
             Difference += Math.PI * 2;
 
-        let Progress = Car01.TurnTicks / Car01.TurnMaxTicks;
+        let Progress = Car.TurnTicks / Car.TurnMaxTicks;
 
         return StartAngle + Difference * Progress;
     }
 
-    return DirectionToAngle(Car01.Direction);
+    return DirectionToAngle(Car.Direction);
 }
 
 function ExitHasDirection(Exit, Direction)
@@ -299,7 +332,7 @@ function PickNextDirection(Exit, CurrentDirection)
     return ValidOptions[Math.floor(Math.random() * ValidOptions.length)];
 }
 
-function HasNoseReachedTileCenter(Car)
+function HasNoseReachedPoint(Car, ExtraPixels)
 {
     let CenterX = Car.TileX * TILE_WIDTH  + TILE_WIDTH  / 2;
     let CenterY = Car.TileY * TILE_HEIGHT + TILE_HEIGHT / 2;
@@ -307,17 +340,19 @@ function HasNoseReachedTileCenter(Car)
     let NoseX = Car.PixelX + TILE_WIDTH / 2;
     let NoseY = Car.PixelY + TILE_HEIGHT / 2;
 
+    let NoseOffset = 20 + ExtraPixels;
+
     if(Car.Direction == NORTH)
-        NoseY -= 20;
+        NoseY -= NoseOffset;
 
     if(Car.Direction == EAST)
-        NoseX += 20;
+        NoseX += NoseOffset;
 
     if(Car.Direction == SOUTH)
-        NoseY += 20;
+        NoseY += NoseOffset;
 
     if(Car.Direction == WEST)
-        NoseX -= 20;
+        NoseX -= NoseOffset;
 
     if(Car.Direction == NORTH && NoseY <= CenterY) return true;
     if(Car.Direction == EAST  && NoseX >= CenterX) return true;
@@ -325,6 +360,16 @@ function HasNoseReachedTileCenter(Car)
     if(Car.Direction == WEST  && NoseX <= CenterX) return true;
 
     return false;
+}
+
+function HasNoseReachedTurnPoint(Car)
+{
+    return HasNoseReachedPoint(Car, 0);
+}
+
+function HasNoseReachedStopPoint(Car)
+{
+    return HasNoseReachedPoint(Car, -15);
 }
 
 function StartTurn(Car, NewDirection)
@@ -388,6 +433,12 @@ function UpdateTurn(Car)
 
 function UpdateDrive(Car)
 {
+    if(Car.WaitTicks > 0)
+    {
+        Car.WaitTicks--;
+        return;
+    }
+
     let Vector = GetDirectionVector(Car.Direction);
 
     Car.PixelX += Vector.X * Car.Speed;
@@ -395,51 +446,97 @@ function UpdateDrive(Car)
 
     Car.TileX = Math.floor((Car.PixelX + TILE_WIDTH / 2) / TILE_WIDTH);
     Car.TileY = Math.floor((Car.PixelY + TILE_HEIGHT / 2) / TILE_HEIGHT);
+	
+	if(
+		Car.TileX != Car.LastStoppedTileX ||
+		Car.TileY != Car.LastStoppedTileY
+	)
+	{
+		Car.LastStoppedTileX = -1;
+		Car.LastStoppedTileY = -1;
+	}
+	
+	if(HasNoseReachedStopPoint(Car))
+{
+    let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
+    let StopTicks = GetStopTicks(TileNumber);
 
-    if(!Car.CheckedThisTile && HasNoseReachedTileCenter(Car))
-    {
-        if(
-            Car.TileX == Car.LastCheckedTileX &&
-            Car.TileY == Car.LastCheckedTileY
+    if(
+        StopTicks > 0 &&
+        (
+            Car.TileX != Car.LastStoppedTileX ||
+            Car.TileY != Car.LastStoppedTileY
         )
-        {
-            return;
-        }
+    )
+    {
+        Car.LastStoppedTileX = Car.TileX;
+        Car.LastStoppedTileY = Car.TileY;
 
-        Car.LastCheckedTileX = Car.TileX;
-        Car.LastCheckedTileY = Car.TileY;
-
-        let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
-        let Exit = GetExit(TileNumber);
-
-        if(!Exit || Exit == "")
-        {
-            alert("Ongeldige Exit: leeg");
-            Paused = true;
-            return;
-        }
-
-        Car.NextDirection = PickNextDirection(Exit, Car.Direction);
+        Car.WaitTicks = StopTicks;
 
         console.log(
-            "Tile",
+            "StopTile",
             TileNumber,
-            "Exit",
-            Exit,
-            "Direction",
-            Car.Direction,
-            "NextDirection",
-            Car.NextDirection
+            "StopTicks",
+            StopTicks
         );
 
-        if(Car.NextDirection != Car.Direction)
-        {
-            StartTurn(Car, Car.NextDirection);
-            return;
-        }
-
-        Car.CheckedThisTile = true;
+        return;
     }
+}
+
+	if(!Car.CheckedThisTile && HasNoseReachedTurnPoint(Car))
+{
+    let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
+    let Exit = GetExit(TileNumber);
+
+    if(!Exit || Exit == "")
+    {
+        alert("Ongeldige Exit: leeg");
+        Paused = true;
+        return;
+    }
+
+
+    /*
+        Dezelfde tegel niet twee keer verwerken.
+    */
+
+    if(
+        Car.TileX == Car.LastCheckedTileX &&
+        Car.TileY == Car.LastCheckedTileY
+    )
+    {
+        return;
+    }
+
+    Car.LastCheckedTileX = Car.TileX;
+    Car.LastCheckedTileY = Car.TileY;
+
+    Car.NextDirection = PickNextDirection(
+        Exit,
+        Car.Direction
+    );
+
+    console.log(
+        "Tile",
+        TileNumber,
+        "Exit",
+        Exit,
+        "Direction",
+        Car.Direction,
+        "NextDirection",
+        Car.NextDirection
+    );
+
+    if(Car.NextDirection != Car.Direction)
+    {
+        StartTurn(Car, Car.NextDirection);
+        return;
+    }
+
+    Car.CheckedThisTile = true;
+}
 
     let LocalX = (Car.PixelX + TILE_WIDTH / 2) % TILE_WIDTH;
     let LocalY = (Car.PixelY + TILE_HEIGHT / 2) % TILE_HEIGHT;
@@ -457,10 +554,13 @@ function UpdateDrive(Car)
 
 function UpdateVehicles()
 {
-    if(Car01.State == "TURN")
-        UpdateTurn(Car01);
-    else
-        UpdateDrive(Car01);
+    for(let i = 0; i < Cars.length; i++)
+    {
+        if(Cars[i].State == "TURN")
+            UpdateTurn(Cars[i]);
+        else
+            UpdateDrive(Cars[i]);
+    }
 }
 
 function DrawVehicles()
@@ -488,6 +588,39 @@ function DrawVehicles()
     Ctx.restore();
 }
 
+function DrawVehicles()
+{
+    if(!CarImage.complete)
+        return;
+
+    for(let i = 0; i < Cars.length; i++)
+    {
+        DrawCar(Cars[i]);
+    }
+}
+
+function DrawCar(Car)
+{
+    Ctx.save();
+
+    Ctx.translate(
+        Car.PixelX + TILE_WIDTH / 2,
+        Car.PixelY + TILE_HEIGHT / 2
+    );
+
+    Ctx.rotate(GetCarRotation(Car));
+
+    Ctx.drawImage(
+        CarImage,
+        -20,
+        -20,
+        40,
+        40
+    );
+
+    Ctx.restore();
+}
+
 function GetExit(TileNumber)
 {
     if(TileNumber < 0)
@@ -502,11 +635,21 @@ function GetExit(TileNumber)
     return TileInfo[TileNumber].Exit;
 }
 
+function GetStopTicks(TileNumber)
+{
+    if(TileNumber < 0)
+        return 0;
+
+    if(!TileInfo[TileNumber])
+        return 0;
+
+    if(!TileInfo[TileNumber].StopTicks)
+        return 0;
+
+    return TileInfo[TileNumber].StopTicks;
+}
 
 
-/*************************************************/
-/* SECTION 6 - GAME LOOP                         */
-/*************************************************/
 
 /*************************************************/
 /* SECTION 6 - GAME LOOP                         */
