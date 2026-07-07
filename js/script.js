@@ -265,7 +265,7 @@ function CreateCar(TileX, TileY, Direction)
         LastStoppedTileY : -1,
 
         TurnTicks : 0,
-        TurnMaxTicks : 10,
+        TurnMaxTicks : 40,
 
         OldDirection : Direction,
         NewDirection : Direction
