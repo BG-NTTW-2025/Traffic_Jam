@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.59";
+const VERSION = "v0.1.60";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -175,36 +175,60 @@ const WEST  = 3;
 
 let CarImage = new Image();
 
-let Car01 =
-{
-    TileX : 1,
-    TileY : 1,
+let Cars =
+[
+    {
+        Name : "Car01",
 
-    PixelX : 0,
-    PixelY : 0,
+        TileX : 1,
+        TileY : 1,
 
-    Direction : SOUTH,
-    NextDirection : SOUTH,
+        PixelX : 0,
+        PixelY : 0,
 
-    State : "DRIVE",
+        Direction : SOUTH,
+        NextDirection : SOUTH,
 
-    TurnTicks : 0,
-    TurnMaxTicks : 40,
-    OldDirection : SOUTH,
-    NewDirection : SOUTH,
+        Speed : 1,
+        Moving : true,
+        Distance : 0,
+        CheckedThisTile : false,
 
-    Speed : 1,
-    CheckedThisTile : false,
+        State : "DRIVE",
+        StopCounter : 0,
 
-    LastCheckedTileX : -1,
-    LastCheckedTileY : -1,
-	
-    WaitTicks : 0,
+        TurnTicks : 0,
+        TurnMaxTicks : 40,
+        TurnFromDirection : SOUTH,
+        TurnToDirection : SOUTH
+    },
 
-    LastStoppedTileX : -1,
-    LastStoppedTileY : -1
-	
-};
+    {
+        Name : "Car02",
+
+        TileX : 3,
+        TileY : 1,
+
+        PixelX : 0,
+        PixelY : 0,
+
+        Direction : SOUTH,
+        NextDirection : SOUTH,
+
+        Speed : 1,
+        Moving : true,
+        Distance : 0,
+        CheckedThisTile : false,
+
+        State : "DRIVE",
+        StopCounter : 0,
+
+        TurnTicks : 0,
+        TurnMaxTicks : 40,
+        TurnFromDirection : SOUTH,
+        TurnToDirection : SOUTH
+    }
+];
 
 function InitVehicles()
 {
@@ -212,8 +236,11 @@ function InitVehicles()
 
     CarImage.src = "Images/Car01.png";
 
-    Car01.PixelX = Car01.TileX * TILE_WIDTH;
-    Car01.PixelY = Car01.TileY * TILE_HEIGHT;
+    for(let i = 0; i < Cars.length; i++)
+    {
+        Cars[i].PixelX = Cars[i].TileX * TILE_WIDTH;
+        Cars[i].PixelY = Cars[i].TileY * TILE_HEIGHT;
+    }
 }
 
 function DirectionToAngle(Direction)
@@ -236,12 +263,12 @@ function GetDirectionVector(Direction)
     return { X:0, Y:0 };
 }
 
-function GetCarRotation()
+function GetCarRotation(Car)
 {
-    if(Car01.State == "TURN")
+    if(Car.State == "TURN")
     {
-        let StartAngle = DirectionToAngle(Car01.OldDirection);
-        let EndAngle   = DirectionToAngle(Car01.NewDirection);
+        let StartAngle = DirectionToAngle(Car.OldDirection);
+        let EndAngle   = DirectionToAngle(Car.NewDirection);
 
         let Difference = EndAngle - StartAngle;
 
@@ -251,12 +278,12 @@ function GetCarRotation()
         if(Difference < -Math.PI)
             Difference += Math.PI * 2;
 
-        let Progress = Car01.TurnTicks / Car01.TurnMaxTicks;
+        let Progress = Car.TurnTicks / Car.TurnMaxTicks;
 
         return StartAngle + Difference * Progress;
     }
 
-    return DirectionToAngle(Car01.Direction);
+    return DirectionToAngle(Car.Direction);
 }
 
 function ExitHasDirection(Exit, Direction)
@@ -527,10 +554,10 @@ function UpdateDrive(Car)
 
 function UpdateVehicles()
 {
-    if(Car01.State == "TURN")
-        UpdateTurn(Car01);
-    else
-        UpdateDrive(Car01);
+    for(let i = 0; i < Cars.length; i++)
+    {
+        UpdateCar(Cars[i]);
+    }
 }
 
 function DrawVehicles()
@@ -538,14 +565,22 @@ function DrawVehicles()
     if(!CarImage.complete)
         return;
 
+    for(let i = 0; i < Cars.length; i++)
+    {
+        DrawCar(Cars[i]);
+    }
+}
+
+function DrawCar(Car)
+{
     Ctx.save();
 
     Ctx.translate(
-        Car01.PixelX + TILE_WIDTH / 2,
-        Car01.PixelY + TILE_HEIGHT / 2
+        Car.PixelX + TILE_WIDTH / 2,
+        Car.PixelY + TILE_HEIGHT / 2
     );
 
-    Ctx.rotate(GetCarRotation());
+    Ctx.rotate(GetCarRotation(Car));
 
     Ctx.drawImage(
         CarImage,
