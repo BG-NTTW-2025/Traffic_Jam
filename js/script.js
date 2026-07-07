@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.57";
+const VERSION = "v0.1.58";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -305,7 +305,7 @@ function PickNextDirection(Exit, CurrentDirection)
     return ValidOptions[Math.floor(Math.random() * ValidOptions.length)];
 }
 
-function HasNoseReachedTileCenter(Car)
+function HasNoseReachedPoint(Car, ExtraPixels)
 {
     let CenterX = Car.TileX * TILE_WIDTH  + TILE_WIDTH  / 2;
     let CenterY = Car.TileY * TILE_HEIGHT + TILE_HEIGHT / 2;
@@ -313,17 +313,19 @@ function HasNoseReachedTileCenter(Car)
     let NoseX = Car.PixelX + TILE_WIDTH / 2;
     let NoseY = Car.PixelY + TILE_HEIGHT / 2;
 
+    let NoseOffset = 20 + ExtraPixels;
+
     if(Car.Direction == NORTH)
-        NoseY -= 20;
+        NoseY -= NoseOffset;
 
     if(Car.Direction == EAST)
-        NoseX += 20;
+        NoseX += NoseOffset;
 
     if(Car.Direction == SOUTH)
-        NoseY += 20;
+        NoseY += NoseOffset;
 
     if(Car.Direction == WEST)
-        NoseX -= 20;
+        NoseX -= NoseOffset;
 
     if(Car.Direction == NORTH && NoseY <= CenterY) return true;
     if(Car.Direction == EAST  && NoseX >= CenterX) return true;
@@ -331,6 +333,16 @@ function HasNoseReachedTileCenter(Car)
     if(Car.Direction == WEST  && NoseX <= CenterX) return true;
 
     return false;
+}
+
+function HasNoseReachedTurnPoint(Car)
+{
+    return HasNoseReachedPoint(Car, 0);
+}
+
+function HasNoseReachedStopPoint(Car)
+{
+    return HasNoseReachedPoint(Car, 5);
 }
 
 function StartTurn(Car, NewDirection)
@@ -417,75 +429,88 @@ function UpdateDrive(Car)
 		Car.LastStoppedTileY = -1;
 	}
 
-    if(!Car.CheckedThisTile && HasNoseReachedTileCenter(Car))
+if(!Car.CheckedThisTile && HasNoseReachedTurnPoint(Car))
+{
+    let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
+    let Exit = GetExit(TileNumber);
+
+    if(!Exit || Exit == "")
     {
-        let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
-        let Exit = GetExit(TileNumber);
+        alert("Ongeldige Exit: leeg");
+        Paused = true;
+        return;
+    }
 
-        if(!Exit || Exit == "")
-        {
-            alert("Ongeldige Exit: leeg");
-            Paused = true;
-            return;
-        }
+    /*
+        Stoptegel.
+        Deze wordt iets later geactiveerd dan de bocht.
+    */
 
-        let StopTicks = GetStopTicks(TileNumber);
+    let StopTicks = GetStopTicks(TileNumber);
 
-        if(
-            StopTicks > 0 &&
-            (
-                Car.TileX != Car.LastStoppedTileX ||
-                Car.TileY != Car.LastStoppedTileY
-            )
+    if(
+        StopTicks > 0 &&
+        HasNoseReachedStopPoint(Car) &&
+        (
+            Car.TileX != Car.LastStoppedTileX ||
+            Car.TileY != Car.LastStoppedTileY
         )
-        {
-            Car.LastStoppedTileX = Car.TileX;
-            Car.LastStoppedTileY = Car.TileY;
+    )
+    {
+        Car.LastStoppedTileX = Car.TileX;
+        Car.LastStoppedTileY = Car.TileY;
 
-            Car.WaitTicks = StopTicks;
-
-            console.log(
-                "StopTile",
-                TileNumber,
-                "StopTicks",
-                StopTicks
-            );
-
-            return;
-        }
-
-        if(
-            Car.TileX == Car.LastCheckedTileX &&
-            Car.TileY == Car.LastCheckedTileY
-        )
-        {
-            return;
-        }
-
-        Car.LastCheckedTileX = Car.TileX;
-        Car.LastCheckedTileY = Car.TileY;
-
-        Car.NextDirection = PickNextDirection(Exit, Car.Direction);
+        Car.WaitTicks = StopTicks;
 
         console.log(
-            "Tile",
+            "StopTile",
             TileNumber,
-            "Exit",
-            Exit,
-            "Direction",
-            Car.Direction,
-            "NextDirection",
-            Car.NextDirection
+            "StopTicks",
+            StopTicks
         );
 
-        if(Car.NextDirection != Car.Direction)
-        {
-            StartTurn(Car, Car.NextDirection);
-            return;
-        }
-
-        Car.CheckedThisTile = true;
+        return;
     }
+
+    /*
+        Dezelfde tegel niet twee keer verwerken.
+    */
+
+    if(
+        Car.TileX == Car.LastCheckedTileX &&
+        Car.TileY == Car.LastCheckedTileY
+    )
+    {
+        return;
+    }
+
+    Car.LastCheckedTileX = Car.TileX;
+    Car.LastCheckedTileY = Car.TileY;
+
+    Car.NextDirection = PickNextDirection(
+        Exit,
+        Car.Direction
+    );
+
+    console.log(
+        "Tile",
+        TileNumber,
+        "Exit",
+        Exit,
+        "Direction",
+        Car.Direction,
+        "NextDirection",
+        Car.NextDirection
+    );
+
+    if(Car.NextDirection != Car.Direction)
+    {
+        StartTurn(Car, Car.NextDirection);
+        return;
+    }
+
+    Car.CheckedThisTile = true;
+} 
 
     let LocalX = (Car.PixelX + TILE_WIDTH / 2) % TILE_WIDTH;
     let LocalY = (Car.PixelY + TILE_HEIGHT / 2) % TILE_HEIGHT;
