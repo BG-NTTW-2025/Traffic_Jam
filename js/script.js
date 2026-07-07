@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.65";
+const VERSION = "v0.1.66";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -295,6 +295,26 @@ function InitTileOccupation()
     console.log("TileOccupation initialized", TileOccupation);
 }
 
+function GetCarIndex(Car)
+{
+    for(let i = 0; i < Cars.length; i++)
+    {
+        if(Cars[i] == Car)
+            return i;
+    }
+
+    return -1;
+}
+
+function ReleaseTileForCar(TileX, TileY, Car)
+{
+    let Index = GetTileOccupationIndex(TileX, TileY);
+    let CarIndex = GetCarIndex(Car);
+
+    if(TileOccupation[Index] == CarIndex)
+        TileOccupation[Index] = -1;
+}
+
 function GetTileOccupationIndex(TileX, TileY)
 {
     return TileY * MapData.width + TileX;
@@ -517,6 +537,11 @@ function UpdateTurn(Car)
 
 function UpdateDrive(Car)
 {
+    let OldPixelX = Car.PixelX;
+    let OldPixelY = Car.PixelY;
+    let OldTileX  = Car.TileX;
+    let OldTileY  = Car.TileY;
+
     if(Car.WaitTicks > 0)
     {
         Car.WaitTicks--;
@@ -530,97 +555,131 @@ function UpdateDrive(Car)
 
     Car.TileX = Math.floor((Car.PixelX + TILE_WIDTH / 2) / TILE_WIDTH);
     Car.TileY = Math.floor((Car.PixelY + TILE_HEIGHT / 2) / TILE_HEIGHT);
-	
-	if(
-		Car.TileX != Car.LastStoppedTileX ||
-		Car.TileY != Car.LastStoppedTileY
-	)
-	{
-		Car.LastStoppedTileX = -1;
-		Car.LastStoppedTileY = -1;
-	}
-	
-	if(HasNoseReachedStopPoint(Car))
-{
-    let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
-    let StopTicks = GetStopTicks(TileNumber);
 
     if(
-        StopTicks > 0 &&
-        (
-            Car.TileX != Car.LastStoppedTileX ||
-            Car.TileY != Car.LastStoppedTileY
-        )
+        Car.TileX != OldTileX ||
+        Car.TileY != OldTileY
     )
     {
-        Car.LastStoppedTileX = Car.TileX;
-        Car.LastStoppedTileY = Car.TileY;
+        ReleaseTileForCar(
+            OldTileX,
+            OldTileY,
+            Car
+        );
+    }
 
-        Car.WaitTicks = StopTicks;
+    if(
+        Car.TileX != Car.LastStoppedTileX ||
+        Car.TileY != Car.LastStoppedTileY
+    )
+    {
+        Car.LastStoppedTileX = -1;
+        Car.LastStoppedTileY = -1;
+    }
 
-        console.log(
-            "StopTile",
-            TileNumber,
-            "StopTicks",
-            StopTicks
+    if(HasNoseReachedStopPoint(Car))
+    {
+        let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
+        let StopTicks = GetStopTicks(TileNumber);
+
+        if(
+            StopTicks > 0 &&
+            (
+                Car.TileX != Car.LastStoppedTileX ||
+                Car.TileY != Car.LastStoppedTileY
+            )
+        )
+        {
+            Car.LastStoppedTileX = Car.TileX;
+            Car.LastStoppedTileY = Car.TileY;
+
+            Car.WaitTicks = StopTicks;
+
+            console.log(
+                "StopTile",
+                TileNumber,
+                "StopTicks",
+                StopTicks
+            );
+
+            return;
+        }
+    }
+
+    if(!Car.CheckedThisTile && HasNoseReachedTurnPoint(Car))
+    {
+        let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
+        let Exit = GetExit(TileNumber);
+
+        if(!Exit || Exit == "")
+        {
+            alert("Ongeldige Exit: leeg");
+            Paused = true;
+            return;
+        }
+
+        /*
+            Dezelfde tegel niet twee keer verwerken.
+        */
+
+        if(
+            Car.TileX == Car.LastCheckedTileX &&
+            Car.TileY == Car.LastCheckedTileY
+        )
+        {
+            return;
+        }
+
+        let PickedDirection = PickNextDirection(
+            Exit,
+            Car.Direction
         );
 
-        return;
+        let TargetVector = GetDirectionVector(PickedDirection);
+
+        let TargetTileX = Car.TileX + TargetVector.X;
+        let TargetTileY = Car.TileY + TargetVector.Y;
+
+        if(!IsTileFree(TargetTileX, TargetTileY))
+        {
+            Car.PixelX = OldPixelX;
+            Car.PixelY = OldPixelY;
+            Car.TileX  = OldTileX;
+            Car.TileY  = OldTileY;
+
+            return;
+        }
+
+        ReserveTile(
+            TargetTileX,
+            TargetTileY,
+            GetCarIndex(Car)
+        );
+
+        Car.LastCheckedTileX = Car.TileX;
+        Car.LastCheckedTileY = Car.TileY;
+
+        Car.NextDirection = PickedDirection;
+
+        console.log(
+            "Tile",
+            TileNumber,
+            "Exit",
+            Exit,
+            "Direction",
+            Car.Direction,
+            "NextDirection",
+            Car.NextDirection
+        );
+
+        if(Car.NextDirection != Car.Direction)
+        {
+            StartTurn(Car, Car.NextDirection);
+            return;
+        }
+
+        Car.CheckedThisTile = true;
     }
-}
-
-	if(!Car.CheckedThisTile && HasNoseReachedTurnPoint(Car))
-{
-    let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
-    let Exit = GetExit(TileNumber);
-
-    if(!Exit || Exit == "")
-    {
-        alert("Ongeldige Exit: leeg");
-        Paused = true;
-        return;
-    }
-
-
-    /*
-        Dezelfde tegel niet twee keer verwerken.
-    */
-
-    if(
-        Car.TileX == Car.LastCheckedTileX &&
-        Car.TileY == Car.LastCheckedTileY
-    )
-    {
-        return;
-    }
-
-    Car.LastCheckedTileX = Car.TileX;
-    Car.LastCheckedTileY = Car.TileY;
-
-    Car.NextDirection = PickNextDirection(
-        Exit,
-        Car.Direction
-    );
-
-    console.log(
-        "Tile",
-        TileNumber,
-        "Exit",
-        Exit,
-        "Direction",
-        Car.Direction,
-        "NextDirection",
-        Car.NextDirection
-    );
-
-    if(Car.NextDirection != Car.Direction)
-    {
-        StartTurn(Car, Car.NextDirection);
-        return;
-    }
-
-    Car.CheckedThisTile = true;
-}
 
     let LocalX = (Car.PixelX + TILE_WIDTH / 2) % TILE_WIDTH;
     let LocalY = (Car.PixelY + TILE_HEIGHT / 2) % TILE_HEIGHT;
