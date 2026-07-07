@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.57";
+const VERSION = "v0.1.58";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -428,29 +428,14 @@ function UpdateDrive(Car)
 		Car.LastStoppedTileX = -1;
 		Car.LastStoppedTileY = -1;
 	}
-
-	if(!Car.CheckedThisTile && HasNoseReachedTurnPoint(Car))
+	
+	if(HasNoseReachedStopPoint(Car))
 {
     let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
-    let Exit = GetExit(TileNumber);
-
-    if(!Exit || Exit == "")
-    {
-        alert("Ongeldige Exit: leeg");
-        Paused = true;
-        return;
-    }
-
-    /*
-        Stoptegel.
-        Deze wordt iets later geactiveerd dan de bocht.
-    */
-
     let StopTicks = GetStopTicks(TileNumber);
 
     if(
         StopTicks > 0 &&
-        HasNoseReachedStopPoint(Car) &&
         (
             Car.TileX != Car.LastStoppedTileX ||
             Car.TileY != Car.LastStoppedTileY
@@ -471,6 +456,20 @@ function UpdateDrive(Car)
 
         return;
     }
+}
+
+	if(!Car.CheckedThisTile && HasNoseReachedTurnPoint(Car))
+{
+    let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
+    let Exit = GetExit(TileNumber);
+
+    if(!Exit || Exit == "")
+    {
+        alert("Ongeldige Exit: leeg");
+        Paused = true;
+        return;
+    }
+
 
     /*
         Dezelfde tegel niet twee keer verwerken.
