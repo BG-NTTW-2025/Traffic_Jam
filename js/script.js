@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.66";
+const VERSION = "v0.1.67";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -173,6 +173,18 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
+const MAX_CARS = 20;
+
+let SpawnCounter = 0;
+
+const Garages =
+[
+    { TileX:1,  TileY:1,  Direction:SOUTH },
+    { TileX:13, TileY:1,  Direction:WEST  },
+    { TileX:1,  TileY:13, Direction:EAST  },
+    { TileX:13, TileY:13, Direction:NORTH }
+];
+
 let CarImage = new Image();
 
 let TileOccupation = [];
@@ -293,6 +305,72 @@ function InitTileOccupation()
     }
 
     console.log("TileOccupation initialized", TileOccupation);
+}
+
+function CreateCar(TileX, TileY, Direction)
+{
+    let Car =
+    {
+        Name : "Car" + String(Cars.length + 1).padStart(2, "0"),
+
+        TileX : TileX,
+        TileY : TileY,
+
+        PixelX : TileX * TILE_WIDTH,
+        PixelY : TileY * TILE_HEIGHT,
+
+        Direction : Direction,
+        NextDirection : Direction,
+
+        Speed : 2,
+
+        State : "DRIVE",
+        WaitTicks : 0,
+
+        CheckedThisTile : false,
+
+        LastCheckedTileX : -1,
+        LastCheckedTileY : -1,
+
+        LastStoppedTileX : -1,
+        LastStoppedTileY : -1,
+
+        TurnTicks : 0,
+        TurnMaxTicks : 40,
+
+        OldDirection : Direction,
+        NewDirection : Direction
+    };
+
+    Cars.push(Car);
+
+    ReserveTile(
+        TileX,
+        TileY,
+        Cars.length - 1
+    );
+
+    console.log("Spawned", Car.Name, TileX, TileY);
+
+    return Car;
+}
+
+function TrySpawnCar()
+{
+    if(Cars.length >= MAX_CARS)
+        return;
+
+    let GarageIndex = Math.floor(Math.random() * Garages.length);
+    let Garage = Garages[GarageIndex];
+
+    if(!IsTileFree(Garage.TileX, Garage.TileY))
+        return;
+
+    CreateCar(
+        Garage.TileX,
+        Garage.TileY,
+        Garage.Direction
+    );
 }
 
 function GetCarIndex(Car)
@@ -697,6 +775,14 @@ function UpdateDrive(Car)
 
 function UpdateVehicles()
 {
+    SpawnCounter++;
+
+    if(SpawnCounter >= 100)
+    {
+        SpawnCounter = 0;
+        TrySpawnCar();
+    }
+
     for(let i = 0; i < Cars.length; i++)
     {
         if(Cars[i].State == "TURN")
