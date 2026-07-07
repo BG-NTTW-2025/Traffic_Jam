@@ -198,6 +198,12 @@ let Car01 =
 
     LastCheckedTileX : -1,
     LastCheckedTileY : -1
+	
+    WaitTicks : 0,
+
+    LastStoppedTileX : -1,
+    LastStoppedTileY : -1,
+	
 };
 
 function InitVehicles()
@@ -502,11 +508,21 @@ function GetExit(TileNumber)
     return TileInfo[TileNumber].Exit;
 }
 
+function GetStopTicks(TileNumber)
+{
+    if(TileNumber < 0)
+        return 0;
+
+    if(!TileInfo[TileNumber])
+        return 0;
+
+    if(!TileInfo[TileNumber].StopTicks)
+        return 0;
+
+    return TileInfo[TileNumber].StopTicks;
+}
 
 
-/*************************************************/
-/* SECTION 6 - GAME LOOP                         */
-/*************************************************/
 
 /*************************************************/
 /* SECTION 6 - GAME LOOP                         */
