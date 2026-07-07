@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.54";
+const VERSION = "v0.1.56";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -197,12 +197,12 @@ let Car01 =
     CheckedThisTile : false,
 
     LastCheckedTileX : -1,
-    LastCheckedTileY : -1
+    LastCheckedTileY : -1,
 	
     WaitTicks : 0,
 
     LastStoppedTileX : -1,
-    LastStoppedTileY : -1,
+    LastStoppedTileY : -1
 	
 };
 
@@ -394,6 +394,12 @@ function UpdateTurn(Car)
 
 function UpdateDrive(Car)
 {
+    if(Car.WaitTicks > 0)
+    {
+        Car.WaitTicks--;
+        return;
+    }
+
     let Vector = GetDirectionVector(Car.Direction);
 
     Car.PixelX += Vector.X * Car.Speed;
@@ -404,6 +410,41 @@ function UpdateDrive(Car)
 
     if(!Car.CheckedThisTile && HasNoseReachedTileCenter(Car))
     {
+        let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
+        let Exit = GetExit(TileNumber);
+
+        if(!Exit || Exit == "")
+        {
+            alert("Ongeldige Exit: leeg");
+            Paused = true;
+            return;
+        }
+
+        let StopTicks = GetStopTicks(TileNumber);
+
+        if(
+            StopTicks > 0 &&
+            (
+                Car.TileX != Car.LastStoppedTileX ||
+                Car.TileY != Car.LastStoppedTileY
+            )
+        )
+        {
+            Car.LastStoppedTileX = Car.TileX;
+            Car.LastStoppedTileY = Car.TileY;
+
+            Car.WaitTicks = StopTicks;
+
+            console.log(
+                "StopTile",
+                TileNumber,
+                "StopTicks",
+                StopTicks
+            );
+
+            return;
+        }
+
         if(
             Car.TileX == Car.LastCheckedTileX &&
             Car.TileY == Car.LastCheckedTileY
@@ -414,16 +455,6 @@ function UpdateDrive(Car)
 
         Car.LastCheckedTileX = Car.TileX;
         Car.LastCheckedTileY = Car.TileY;
-
-        let TileNumber = GetTileNumber(Car.TileX, Car.TileY);
-        let Exit = GetExit(TileNumber);
-
-        if(!Exit || Exit == "")
-        {
-            alert("Ongeldige Exit: leeg");
-            Paused = true;
-            return;
-        }
 
         Car.NextDirection = PickNextDirection(Exit, Car.Direction);
 
