@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.56";
+const VERSION = "v0.1.57";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -407,6 +407,15 @@ function UpdateDrive(Car)
 
     Car.TileX = Math.floor((Car.PixelX + TILE_WIDTH / 2) / TILE_WIDTH);
     Car.TileY = Math.floor((Car.PixelY + TILE_HEIGHT / 2) / TILE_HEIGHT);
+	
+	if(
+		Car.TileX != Car.LastStoppedTileX ||
+		Car.TileY != Car.LastStoppedTileY
+	)
+	{
+		Car.LastStoppedTileX = -1;
+		Car.LastStoppedTileY = -1;
+	}
 
     if(!Car.CheckedThisTile && HasNoseReachedTileCenter(Car))
     {
