@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.63";
+const VERSION = "v0.1.64";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -189,7 +189,7 @@ let Cars =
         Direction : SOUTH,
         NextDirection : SOUTH,
 
-        Speed : 1,
+        Speed : 2,
         Moving : true,
         Distance : 0,
         CheckedThisTile : false,
@@ -215,7 +215,34 @@ let Cars =
         Direction : SOUTH,
         NextDirection : SOUTH,
 
-        Speed : 1,
+        Speed : 2,
+        Moving : true,
+        Distance : 0,
+        CheckedThisTile : false,
+
+        State : "DRIVE",
+        StopCounter : 0,
+
+        TurnTicks : 0,
+        TurnMaxTicks : 40,
+        TurnFromDirection : SOUTH,
+        TurnToDirection : SOUTH
+    }
+];
+
+    {
+        Name : "Car03",
+
+        TileX : 1,
+        TileY : 3,
+
+        PixelX : 0,
+        PixelY : 0,
+
+        Direction : SOUTH,
+        NextDirection : SOUTH,
+
+        Speed : 2,
         Moving : true,
         Distance : 0,
         CheckedThisTile : false,
