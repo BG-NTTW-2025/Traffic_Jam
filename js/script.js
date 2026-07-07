@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.64";
+const VERSION = "v0.1.65";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -175,6 +175,8 @@ const WEST  = 3;
 
 let CarImage = new Image();
 
+let TileOccupation = [];
+
 let Cars =
 [
     {
@@ -268,6 +270,61 @@ function InitVehicles()
         Cars[i].PixelX = Cars[i].TileX * TILE_WIDTH;
         Cars[i].PixelY = Cars[i].TileY * TILE_HEIGHT;
     }
+
+    InitTileOccupation();
+}
+
+function InitTileOccupation()
+{
+    TileOccupation = [];
+
+    for(let i = 0; i < MapData.width * MapData.height; i++)
+    {
+        TileOccupation[i] = -1;
+    }
+
+    for(let i = 0; i < Cars.length; i++)
+    {
+        ReserveTile(
+            Cars[i].TileX,
+            Cars[i].TileY,
+            i
+        );
+    }
+
+    console.log("TileOccupation initialized", TileOccupation);
+}
+
+function GetTileOccupationIndex(TileX, TileY)
+{
+    return TileY * MapData.width + TileX;
+}
+
+function IsTileFree(TileX, TileY)
+{
+    if(TileX < 0 || TileY < 0)
+        return false;
+
+    if(TileX >= MapData.width || TileY >= MapData.height)
+        return false;
+
+    let Index = GetTileOccupationIndex(TileX, TileY);
+
+    return TileOccupation[Index] == -1;
+}
+
+function ReserveTile(TileX, TileY, CarIndex)
+{
+    let Index = GetTileOccupationIndex(TileX, TileY);
+
+    TileOccupation[Index] = CarIndex;
+}
+
+function ReleaseTile(TileX, TileY)
+{
+    let Index = GetTileOccupationIndex(TileX, TileY);
+
+    TileOccupation[Index] = -1;
 }
 
 function DirectionToAngle(Direction)
