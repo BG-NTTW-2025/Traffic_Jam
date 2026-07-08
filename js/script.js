@@ -407,6 +407,29 @@ function ExitHasDirection(Exit, Direction)
     return false;
 }
 
+function HasCarCenterReachedTileCenter(Car)
+{
+    let TileCenterX = Car.TileX * TILE_WIDTH  + TILE_WIDTH  / 2;
+    let TileCenterY = Car.TileY * TILE_HEIGHT + TILE_HEIGHT / 2;
+
+    let CarCenterX = Car.PixelX + TILE_WIDTH  / 2;
+    let CarCenterY = Car.PixelY + TILE_HEIGHT / 2;
+
+    if(Car.Direction == NORTH && CarCenterY <= TileCenterY)
+        return true;
+
+    if(Car.Direction == EAST && CarCenterX >= TileCenterX)
+        return true;
+
+    if(Car.Direction == SOUTH && CarCenterY >= TileCenterY)
+        return true;
+
+    if(Car.Direction == WEST && CarCenterX <= TileCenterX)
+        return true;
+
+    return false;
+}
+
 function IsOppositeDirection(A, B)
 {
     if(A == NORTH && B == SOUTH) return true;
