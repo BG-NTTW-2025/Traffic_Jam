@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.82";
+const VERSION = "v0.1.83";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -172,6 +172,8 @@ const NORTH = 0;
 const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
+
+const QUEUE_DISTANCE_BEFORE_CENTER = 20;
 
 const MAX_CARS = 20;
 
@@ -473,7 +475,8 @@ function HasNoseReachedPoint(Car, ExtraPixels)
     return false;
 }
 
-function HasCarCenterReachedTileCenter(Car)
+
+function HasCarReachedQueuePoint(Car)
 {
     let TileCenterX = Car.TileX * TILE_WIDTH  + TILE_WIDTH  / 2;
     let TileCenterY = Car.TileY * TILE_HEIGHT + TILE_HEIGHT / 2;
@@ -481,16 +484,20 @@ function HasCarCenterReachedTileCenter(Car)
     let CarCenterX = Car.PixelX + TILE_WIDTH  / 2;
     let CarCenterY = Car.PixelY + TILE_HEIGHT / 2;
 
-    if(Car.Direction == NORTH && CarCenterY <= TileCenterY)
+    if(Car.Direction == NORTH &&
+       CarCenterY <= TileCenterY + QUEUE_DISTANCE_BEFORE_CENTER)
         return true;
 
-    if(Car.Direction == EAST && CarCenterX >= TileCenterX)
+    if(Car.Direction == EAST &&
+       CarCenterX >= TileCenterX - QUEUE_DISTANCE_BEFORE_CENTER)
         return true;
 
-    if(Car.Direction == SOUTH && CarCenterY >= TileCenterY)
+    if(Car.Direction == SOUTH &&
+       CarCenterY >= TileCenterY - QUEUE_DISTANCE_BEFORE_CENTER)
         return true;
 
-    if(Car.Direction == WEST && CarCenterX <= TileCenterX)
+    if(Car.Direction == WEST &&
+       CarCenterX <= TileCenterX + QUEUE_DISTANCE_BEFORE_CENTER)
         return true;
 
     return false;
@@ -672,6 +679,8 @@ function UpdateDrive(Car)
 
 if(!IsTileFree(TargetTileX, TargetTileY))
 {
+    if(HasCarReachedQueuePoint(Car))
+    {
         Car.PixelX = OldPixelX;
         Car.PixelY = OldPixelY;
         Car.TileX  = OldTileX;
@@ -679,6 +688,12 @@ if(!IsTileFree(TargetTileX, TargetTileY))
 
         return;
     }
+
+    Car.LastCheckedTileX = -1;
+    Car.LastCheckedTileY = -1;
+
+    return;
+}
 
         ReserveTile(
             TargetTileX,
