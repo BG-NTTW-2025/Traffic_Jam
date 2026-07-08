@@ -567,10 +567,23 @@ function UpdateTurn(Car)
 
 function UpdateDrive(Car)
 {
-    let OldPixelX = Car.PixelX;
-    let OldPixelY = Car.PixelY;
-    let OldTileX  = Car.TileX;
-    let OldTileY  = Car.TileY;
+    if(!IsTileFree(TargetTileX, TargetTileY))
+{
+    if(HasCarCenterReachedTileCenter(Car))
+    {
+        Car.PixelX = OldPixelX;
+        Car.PixelY = OldPixelY;
+        Car.TileX  = OldTileX;
+        Car.TileY  = OldTileY;
+
+        return;
+    }
+
+    Car.LastCheckedTileX = -1;
+    Car.LastCheckedTileY = -1;
+
+    return;
+}
 
     if(Car.WaitTicks > 0)
     {
