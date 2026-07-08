@@ -173,7 +173,7 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-const QUEUE_DISTANCE_BEFORE_CENTER = 0;
+const QUEUE_DISTANCE_BEFORE_CENTER = 10;
 
 const MAX_CARS = 40;
 
