@@ -678,7 +678,7 @@ if(!IsTileFree(TargetTileX, TargetTileY))
     if(Car.WaitOffset < 5)
     {
         Car.WaitOffset += Car.Speed;
-        Car.Distance += Car.Speed;
+        Car.Distance -= Car.Speed;
     }
     else
     {
