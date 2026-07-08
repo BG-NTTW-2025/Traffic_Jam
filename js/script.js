@@ -597,9 +597,6 @@ function UpdateDrive(Car)
             )
         )
         {
-
-            );
-
             return;
         }
     }
