@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.89";
+const VERSION = "v0.1.90";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -632,6 +632,7 @@ function UpdateDrive(Car)
             Car.LastStoppedTileY = Car.TileY;
 
             Car.WaitTicks = StopTicks;
+			Car.WaitingForExit = true;
 
           //  console.log(
           //      "StopTile",
