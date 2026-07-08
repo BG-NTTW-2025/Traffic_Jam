@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.87";
+const VERSION = "v0.1.88";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
