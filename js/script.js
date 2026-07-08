@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.91";
+const VERSION = "v0.1.92";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -268,7 +268,7 @@ function CreateCar(TileX, TileY, Direction)
         LastStoppedTileY : -1,
 
         TurnTicks : 0,
-        TurnMaxTicks : 40,
+        TurnMaxTicks : 100,
 
         OldDirection : Direction,
         NewDirection : Direction
