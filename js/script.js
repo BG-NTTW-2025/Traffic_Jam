@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.80";
+const VERSION = "v0.1.81";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -473,6 +473,29 @@ function HasNoseReachedPoint(Car, ExtraPixels)
     return false;
 }
 
+function HasCarCenterReachedTileCenter(Car)
+{
+    let TileCenterX = Car.TileX * TILE_WIDTH  + TILE_WIDTH  / 2;
+    let TileCenterY = Car.TileY * TILE_HEIGHT + TILE_HEIGHT / 2;
+
+    let CarCenterX = Car.PixelX + TILE_WIDTH  / 2;
+    let CarCenterY = Car.PixelY + TILE_HEIGHT / 2;
+
+    if(Car.Direction == NORTH && CarCenterY <= TileCenterY)
+        return true;
+
+    if(Car.Direction == EAST && CarCenterX >= TileCenterX)
+        return true;
+
+    if(Car.Direction == SOUTH && CarCenterY >= TileCenterY)
+        return true;
+
+    if(Car.Direction == WEST && CarCenterX <= TileCenterX)
+        return true;
+
+    return false;
+}
+
 function HasNoseReachedTurnPoint(Car)
 {
     return HasNoseReachedPoint(Car, 0);
@@ -647,15 +670,23 @@ function UpdateDrive(Car)
         let TargetTileX = Car.TileX + TargetVector.X;
         let TargetTileY = Car.TileY + TargetVector.Y;
 
-        if(!IsTileFree(TargetTileX, TargetTileY))
-        {
-            Car.PixelX = OldPixelX;
-            Car.PixelY = OldPixelY;
-            Car.TileX  = OldTileX;
-            Car.TileY  = OldTileY;
+if(!IsTileFree(TargetTileX, TargetTileY))
+{
+    if(HasCarCenterReachedTileCenter(Car))
+    {
+        Car.PixelX = OldPixelX;
+        Car.PixelY = OldPixelY;
+        Car.TileX  = OldTileX;
+        Car.TileY  = OldTileY;
 
-            return;
-        }
+        return;
+    }
+
+    Car.LastCheckedTileX = -1;
+    Car.LastCheckedTileY = -1;
+
+    return;
+}
 
         ReserveTile(
             TargetTileX,
