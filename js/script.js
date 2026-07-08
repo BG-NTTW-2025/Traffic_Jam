@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.90";
+const VERSION = "v0.1.91";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -580,11 +580,13 @@ function UpdateDrive(Car)
     let OldTileX  = Car.TileX;
     let OldTileY  = Car.TileY;
 
+	if(Car.WaitTicks > 0)
+	{
+		Car.WaitTicks--;
+
     if(Car.WaitTicks > 0)
-    {
-        Car.WaitTicks--;
         return;
-    }
+	}
 
     let Vector = GetDirectionVector(Car.Direction);
 
