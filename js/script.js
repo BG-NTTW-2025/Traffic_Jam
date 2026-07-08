@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.84";
+const VERSION = "v0.1.85";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -173,7 +173,7 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-const QUEUE_DISTANCE_BEFORE_CENTER = -15;
+const QUEUE_DISTANCE_BEFORE_CENTER = -10;
 
 const MAX_CARS = 20;
 
