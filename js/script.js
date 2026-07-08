@@ -173,9 +173,9 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-const QUEUE_DISTANCE_BEFORE_CENTER = 5;
+const QUEUE_DISTANCE_BEFORE_CENTER = 15;
 
-const MAX_CARS = 20;
+const MAX_CARS = 30;
 
 let SpawnCounter = 0;
 
