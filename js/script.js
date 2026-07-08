@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.2.2";
+const VERSION = "v0.2.3";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -173,7 +173,6 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-
 const MAX_CARS = 40;
 
 let SpawnCounter = 0;
@@ -255,9 +254,9 @@ function CreateCar(TileX, TileY, Direction)
         Speed : 2,
 
         State : "DRIVE",
-        
-        WaitOffset : 0,
-        Distance : 0,
+        WaitTicks : 0,
+		
+		WaitOffset : 0,
 
         CheckedThisTile : false,
 
@@ -675,11 +674,11 @@ function UpdateDrive(Car)
 
 if(!IsTileFree(TargetTileX, TargetTileY))
 {
-    if(Car.WaitOffset < 5)
-    {
-        Car.WaitOffset += Car.Speed;
-        Car.Distance -= Car.Speed;
-    }
+if(Car.WaitOffset < 5)
+{
+    Car.WaitOffset += Car.Speed;
+    Car.Distance += Car.Speed+5;
+}
     else
     {
         Car.PixelX = OldPixelX;
@@ -695,10 +694,10 @@ if(!IsTileFree(TargetTileX, TargetTileY))
             TargetTileX,
             TargetTileY,
             GetCarIndex(Car)
-        
         );
+		
+		Car.WaitOffset = 0;
 
-        Car.WaitOffset = 0;
         Car.LastCheckedTileX = Car.TileX;
         Car.LastCheckedTileY = Car.TileY;
 
@@ -755,31 +754,6 @@ function UpdateVehicles()
         else
             UpdateDrive(Cars[i]);
     }
-}
-
-function DrawVehicles()
-{
-    if(!CarImage.complete)
-        return;
-
-    Ctx.save();
-
-    Ctx.translate(
-        Car01.PixelX + TILE_WIDTH / 2,
-        Car01.PixelY + TILE_HEIGHT / 2
-    );
-
-    Ctx.rotate(GetCarRotation());
-
-    Ctx.drawImage(
-        CarImage,
-        -20,
-        -20,
-        40,
-        40
-    );
-
-    Ctx.restore();
 }
 
 function DrawVehicles()
