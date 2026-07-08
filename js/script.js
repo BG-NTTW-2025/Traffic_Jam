@@ -523,7 +523,12 @@ function UpdateTurn(Car)
     let OldVector = GetDirectionVector(Car.OldDirection);
     let NewVector = GetDirectionVector(Car.NewDirection);
 
-    let Step = 20 / Car.TurnMaxTicks;
+let TurnDistance = 20 - Car.WaitOffset;
+
+if(TurnDistance < 0)
+    TurnDistance = 0;
+
+let Step = TurnDistance / Car.TurnMaxTicks;
 
     Car.PixelX += OldVector.X * Step;
     Car.PixelY += OldVector.Y * Step;
@@ -564,6 +569,7 @@ function UpdateTurn(Car)
         Car.State = "DRIVE";
         Car.CheckedThisTile = true;
         Car.TurnTicks = 0;
+		Car.WaitOffset = 0;
     }
 }
 
@@ -677,7 +683,7 @@ if(!IsTileFree(TargetTileX, TargetTileY))
 if(Car.WaitOffset < 5)
 {
     Car.WaitOffset += Car.Speed;
-    Car.Distance += Car.Speed+5;
+    
 }
     else
     {
