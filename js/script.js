@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.81";
+const VERSION = "v0.1.82";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -672,8 +672,6 @@ function UpdateDrive(Car)
 
 if(!IsTileFree(TargetTileX, TargetTileY))
 {
-    if(HasCarCenterReachedTileCenter(Car))
-    {
         Car.PixelX = OldPixelX;
         Car.PixelY = OldPixelY;
         Car.TileX  = OldTileX;
@@ -681,12 +679,6 @@ if(!IsTileFree(TargetTileX, TargetTileY))
 
         return;
     }
-
-    Car.LastCheckedTileX = -1;
-    Car.LastCheckedTileY = -1;
-
-    return;
-}
 
         ReserveTile(
             TargetTileX,
