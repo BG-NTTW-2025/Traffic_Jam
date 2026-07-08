@@ -703,7 +703,7 @@ function UpdateDrive(Car)
         Car.LastCheckedTileY = Car.TileY;
 
         Car.NextDirection = PickedDirection;
-
+/*
         console.log(
             "Tile",
             TileNumber,
@@ -714,7 +714,7 @@ function UpdateDrive(Car)
             "NextDirection",
             Car.NextDirection
         );
-
+*/
         if(Car.NextDirection != Car.Direction)
         {
             StartTurn(Car, Car.NextDirection);
