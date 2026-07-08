@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.72";
+const VERSION = "v0.1.73";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -622,6 +622,42 @@ function UpdateDrive(Car)
         {
             alert("Ongeldige Exit: leeg");
             Paused = true;
+            return;
+        }
+
+        /*
+            Extra beveiliging:
+
+            Als deze tegel een stoptegel is en deze auto is hier
+            nog niet gestopt, dan mag hij nog GEEN exit-tegel
+            reserveren.
+
+            Dit voorkomt dat een stilstaande stop-auto alvast
+            de volgende tegel blokkeert.
+        */
+
+        let StopTicks = GetStopTicks(TileNumber);
+
+        if(
+            StopTicks > 0 &&
+            (
+                Car.TileX != Car.LastStoppedTileX ||
+                Car.TileY != Car.LastStoppedTileY
+            )
+        )
+        {
+            Car.LastStoppedTileX = Car.TileX;
+            Car.LastStoppedTileY = Car.TileY;
+
+            Car.WaitTicks = StopTicks;
+
+            console.log(
+                "StopTile before reserve",
+                TileNumber,
+                "StopTicks",
+                StopTicks
+            );
+
             return;
         }
 
