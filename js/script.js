@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.88";
+const VERSION = "v0.1.89";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -257,6 +257,7 @@ function CreateCar(TileX, TileY, Direction)
 
         State : "DRIVE",
         WaitTicks : 0,
+		WaitingForExit : false,
 
         CheckedThisTile : false,
 
@@ -767,31 +768,6 @@ function UpdateVehicles()
         else
             UpdateDrive(Cars[i]);
     }
-}
-
-function DrawVehicles()
-{
-    if(!CarImage.complete)
-        return;
-
-    Ctx.save();
-
-    Ctx.translate(
-        Car01.PixelX + TILE_WIDTH / 2,
-        Car01.PixelY + TILE_HEIGHT / 2
-    );
-
-    Ctx.rotate(GetCarRotation());
-
-    Ctx.drawImage(
-        CarImage,
-        -20,
-        -20,
-        40,
-        40
-    );
-
-    Ctx.restore();
 }
 
 function DrawVehicles()
