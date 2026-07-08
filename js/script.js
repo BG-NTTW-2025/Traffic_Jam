@@ -693,9 +693,10 @@ if(!IsTileFree(TargetTileX, TargetTileY))
             TargetTileX,
             TargetTileY,
             GetCarIndex(Car)
-            Car.WaitOffset = 0;
+        
         );
 
+        Car.WaitOffset = 0;
         Car.LastCheckedTileX = Car.TileX;
         Car.LastCheckedTileY = Car.TileY;
 
