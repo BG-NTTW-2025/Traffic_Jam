@@ -597,16 +597,7 @@ function UpdateDrive(Car)
             )
         )
         {
-            Car.LastStoppedTileX = Car.TileX;
-            Car.LastStoppedTileY = Car.TileY;
 
-            Car.WaitTicks = StopTicks;
-
-            console.log(
-                "StopTile",
-                TileNumber,
-                "StopTicks",
-                StopTicks
             );
 
             return;
