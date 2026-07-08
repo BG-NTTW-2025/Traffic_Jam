@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.1.83";
+const VERSION = "v0.1.84";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -173,9 +173,9 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-const QUEUE_DISTANCE_BEFORE_CENTER = 15;
+const QUEUE_DISTANCE_BEFORE_CENTER = -15;
 
-const MAX_CARS = 30;
+const MAX_CARS = 20;
 
 let SpawnCounter = 0;
 
@@ -679,18 +679,28 @@ function UpdateDrive(Car)
 
 if(!IsTileFree(TargetTileX, TargetTileY))
 {
-    if(HasCarReachedQueuePoint(Car))
+    if(PickedDirection == Car.Direction)
     {
-        Car.PixelX = OldPixelX;
-        Car.PixelY = OldPixelY;
-        Car.TileX  = OldTileX;
-        Car.TileY  = OldTileY;
+        if(HasCarReachedQueuePoint(Car))
+        {
+            Car.PixelX = OldPixelX;
+            Car.PixelY = OldPixelY;
+            Car.TileX  = OldTileX;
+            Car.TileY  = OldTileY;
+
+            return;
+        }
+
+        Car.LastCheckedTileX = -1;
+        Car.LastCheckedTileY = -1;
 
         return;
     }
 
-    Car.LastCheckedTileX = -1;
-    Car.LastCheckedTileY = -1;
+    Car.PixelX = OldPixelX;
+    Car.PixelY = OldPixelY;
+    Car.TileX  = OldTileX;
+    Car.TileY  = OldTileY;
 
     return;
 }
