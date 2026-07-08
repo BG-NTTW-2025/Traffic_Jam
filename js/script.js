@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.2.1";
+const VERSION = "v0.2.2";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -173,7 +173,7 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-const MAX_CARS = 20;
+const MAX_CARS = 40;
 
 let SpawnCounter = 0;
 
