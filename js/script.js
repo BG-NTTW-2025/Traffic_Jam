@@ -255,7 +255,9 @@ function CreateCar(TileX, TileY, Direction)
         Speed : 2,
 
         State : "DRIVE",
-        WaitTicks : 0,
+        
+        WaitOffset : 0,
+        Distance : 0,
 
         CheckedThisTile : false,
 
@@ -623,7 +625,6 @@ function UpdateDrive(Car)
         {
             Car.LastStoppedTileX = Car.TileX;
             Car.LastStoppedTileY = Car.TileY;
-            WaitOffset : 0,
 
             Car.WaitTicks = StopTicks;
 
@@ -678,7 +679,6 @@ if(!IsTileFree(TargetTileX, TargetTileY))
     {
         Car.WaitOffset += Car.Speed;
         Car.Distance += Car.Speed;
-    }
     }
     else
     {
