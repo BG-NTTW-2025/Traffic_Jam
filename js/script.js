@@ -233,7 +233,7 @@ function InitTileOccupation()
         );
     }
 
-    console.log("TileOccupation initialized", TileOccupation);
+  //  console.log("TileOccupation initialized", TileOccupation);
 }
 
 function CreateCar(TileX, TileY, Direction)
@@ -407,29 +407,6 @@ function ExitHasDirection(Exit, Direction)
     return false;
 }
 
-function HasCarCenterReachedTileCenter(Car)
-{
-    let TileCenterX = Car.TileX * TILE_WIDTH  + TILE_WIDTH  / 2;
-    let TileCenterY = Car.TileY * TILE_HEIGHT + TILE_HEIGHT / 2;
-
-    let CarCenterX = Car.PixelX + TILE_WIDTH  / 2;
-    let CarCenterY = Car.PixelY + TILE_HEIGHT / 2;
-
-    if(Car.Direction == NORTH && CarCenterY <= TileCenterY)
-        return true;
-
-    if(Car.Direction == EAST && CarCenterX >= TileCenterX)
-        return true;
-
-    if(Car.Direction == SOUTH && CarCenterY >= TileCenterY)
-        return true;
-
-    if(Car.Direction == WEST && CarCenterX <= TileCenterX)
-        return true;
-
-    return false;
-}
-
 function IsOppositeDirection(A, B)
 {
     if(A == NORTH && B == SOUTH) return true;
@@ -567,23 +544,10 @@ function UpdateTurn(Car)
 
 function UpdateDrive(Car)
 {
-    if(!IsTileFree(TargetTileX, TargetTileY))
-{
-    if(HasCarCenterReachedTileCenter(Car))
-    {
-        Car.PixelX = OldPixelX;
-        Car.PixelY = OldPixelY;
-        Car.TileX  = OldTileX;
-        Car.TileY  = OldTileY;
-
-        return;
-    }
-
-    Car.LastCheckedTileX = -1;
-    Car.LastCheckedTileY = -1;
-
-    return;
-}
+    let OldPixelX = Car.PixelX;
+    let OldPixelY = Car.PixelY;
+    let OldTileX  = Car.TileX;
+    let OldTileY  = Car.TileY;
 
     if(Car.WaitTicks > 0)
     {
@@ -638,12 +602,12 @@ function UpdateDrive(Car)
 
             Car.WaitTicks = StopTicks;
 
-            console.log(
-                "StopTile",
-                TileNumber,
-                "StopTicks",
-                StopTicks
-            );
+          //  console.log(
+          //      "StopTile",
+           //     TileNumber,
+            //    "StopTicks",
+             //   StopTicks
+           // );
 
             return;
         }
@@ -704,16 +668,16 @@ function UpdateDrive(Car)
 
         Car.NextDirection = PickedDirection;
 
-        console.log(
-            "Tile",
-            TileNumber,
-            "Exit",
-            Exit,
-            "Direction",
-            Car.Direction,
-            "NextDirection",
-            Car.NextDirection
-        );
+        //console.log(
+          //  "Tile",
+          //  TileNumber,
+         //   "Exit",
+         //  Exit,
+         //   "Direction",
+         //   Car.Direction,
+         //   "NextDirection",
+         //   Car.NextDirection
+       // );
 
         if(Car.NextDirection != Car.Direction)
         {
