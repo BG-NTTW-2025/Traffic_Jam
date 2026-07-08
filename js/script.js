@@ -674,7 +674,7 @@ function UpdateDrive(Car)
 
 if(!IsTileFree(TargetTileX, TargetTileY))
 {
-    if(Car.WaitOffset < 10)
+    if(Car.WaitOffset < 5)
     {
         Car.WaitOffset += Car.Speed;
     }
