@@ -172,6 +172,7 @@ const NORTH = 0;
 const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
+WaitOffset : 0,
 
 const MAX_CARS = 40;
 
@@ -672,19 +673,27 @@ function UpdateDrive(Car)
 
 if(!IsTileFree(TargetTileX, TargetTileY))
 {
+    if(Car.WaitOffset < 10)
+    {
+        Car.WaitOffset += Car.Speed;
+    }
+    else
+    {
         Car.PixelX = OldPixelX;
         Car.PixelY = OldPixelY;
         Car.TileX  = OldTileX;
         Car.TileY  = OldTileY;
-
-        return;
     }
+
+    return;
+}
 
         ReserveTile(
             TargetTileX,
             TargetTileY,
             GetCarIndex(Car)
         );
+        Car.WaitOffset = 0;
 
         Car.LastCheckedTileX = Car.TileX;
         Car.LastCheckedTileY = Car.TileY;
