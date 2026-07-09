@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.2.3";
+const VERSION = "v0.1.82";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -173,7 +173,7 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-const MAX_CARS = 40;
+const MAX_CARS = 20;
 
 let SpawnCounter = 0;
 
@@ -742,6 +742,31 @@ function UpdateVehicles()
         else
             UpdateDrive(Cars[i]);
     }
+}
+
+function DrawVehicles()
+{
+    if(!CarImage.complete)
+        return;
+
+    Ctx.save();
+
+    Ctx.translate(
+        Car01.PixelX + TILE_WIDTH / 2,
+        Car01.PixelY + TILE_HEIGHT / 2
+    );
+
+    Ctx.rotate(GetCarRotation());
+
+    Ctx.drawImage(
+        CarImage,
+        -20,
+        -20,
+        40,
+        40
+    );
+
+    Ctx.restore();
 }
 
 function DrawVehicles()
