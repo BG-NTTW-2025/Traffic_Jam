@@ -173,7 +173,7 @@ const EAST  = 1;
 const SOUTH = 2;
 const WEST  = 3;
 
-const MAX_CARS = 50;
+const MAX_CARS = 60;
 
 let SpawnCounter = 0;
 
