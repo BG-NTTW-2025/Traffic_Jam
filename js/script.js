@@ -7,7 +7,7 @@
 let TilesetData;
 
 let TileInfo = [];
-const VERSION = "v0.2.3";
+const VERSION = "v0.2.2";
 let TILE_WIDTH;
 let TILE_HEIGHT;
 
@@ -255,8 +255,6 @@ function CreateCar(TileX, TileY, Direction)
 
         State : "DRIVE",
         WaitTicks : 0,
-		
-		WaitOffset : 0,
 
         CheckedThisTile : false,
 
@@ -523,12 +521,7 @@ function UpdateTurn(Car)
     let OldVector = GetDirectionVector(Car.OldDirection);
     let NewVector = GetDirectionVector(Car.NewDirection);
 
-let TurnDistance = 20 - Car.WaitOffset;
-
-if(TurnDistance < 0)
-    TurnDistance = 0;
-
-let Step = TurnDistance / Car.TurnMaxTicks;
+    let Step = 20 / Car.TurnMaxTicks;
 
     Car.PixelX += OldVector.X * Step;
     Car.PixelY += OldVector.Y * Step;
@@ -569,7 +562,6 @@ let Step = TurnDistance / Car.TurnMaxTicks;
         Car.State = "DRIVE";
         Car.CheckedThisTile = true;
         Car.TurnTicks = 0;
-		Car.WaitOffset = 0;
     }
 }
 
@@ -680,29 +672,19 @@ function UpdateDrive(Car)
 
 if(!IsTileFree(TargetTileX, TargetTileY))
 {
-if(Car.WaitOffset < 5)
-{
-    Car.WaitOffset += Car.Speed;
-    
-}
-    else
-    {
         Car.PixelX = OldPixelX;
         Car.PixelY = OldPixelY;
         Car.TileX  = OldTileX;
         Car.TileY  = OldTileY;
-    }
 
-    return;
-}
+        return;
+    }
 
         ReserveTile(
             TargetTileX,
             TargetTileY,
             GetCarIndex(Car)
         );
-		
-		Car.WaitOffset = 0;
 
         Car.LastCheckedTileX = Car.TileX;
         Car.LastCheckedTileY = Car.TileY;
